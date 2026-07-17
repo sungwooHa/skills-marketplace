@@ -1,0 +1,13 @@
+{
+  "name": "travel-proposal",
+  "version": "1.0.0",
+  "description": "여행 기획서를 오프라인 자립형 인터랙티브 HTML로 제작 — 주제별 탭, 내장 오프라인 지도, 맛집·쇼핑 카드, Airbnb 디자인 시스템. 한국어 개조식 산출물.",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/travel-proposal",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["travel", "itinerary", "여행", "기획서", "html", "airbnb-design", "korean", "offline-maps"],
+  "skills": ["./.claude/skills/"]
+}

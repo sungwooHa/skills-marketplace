@@ -1,0 +1,19 @@
+{
+  "name": "skills-marketplace",
+  "owner": {
+    "name": "sungwooHa"
+  },
+  "metadata": {
+    "description": "sungwooHa의 개인 Claude Code 스킬 마켓플레이스 — 목적별 스킬을 모아두고 필요한 것만 골라 설치",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "travel-proposal",
+      "source": "./plugins/travel-proposal",
+      "description": "여행 기획서/계획서를 오프라인 자립형 HTML(주제탭·인터랙티브 지도·카드·Airbnb 디자인)로 제작. 한국어 개조식 산출물.",
+      "version": "1.0.0",
+      "keywords": ["travel", "itinerary", "여행", "기획서", "html", "airbnb-design", "korean", "offline-maps"]
+    }
+  ]
+}
