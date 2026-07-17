@@ -8,10 +8,6 @@
 
 sungwooHa의 개인 **Claude Code 스킬 마켓플레이스**. 목적별 스킬을 한 레포에 모아두고, 필요한 것만 골라 설치합니다.
 
-<p align="center">
-  <img src="./plugins/travel-proposal/assets/desktop-cover.png" alt="travel-proposal 미리보기 — 커버" width="720">
-</p>
-
 ## 설치 (필요한 스킬만)
 
 마켓플레이스를 한 번 등록한 뒤, 원하는 플러그인만 설치합니다.
@@ -37,7 +33,9 @@ cd skills-marketplace
 
 | 스킬 | 설명 |
 |---|---|
-| **travel-proposal** | 여행 기획서를 오프라인 자립형 인터랙티브 HTML(주제탭·지도·카드·Airbnb 디자인)로 제작. 한국어 개조식. |
+| [**travel-proposal**](./plugins/travel-proposal) | 여행 기획서를 오프라인 자립형 인터랙티브 HTML(주제탭·지도·카드·Airbnb 디자인)로 제작. 한국어 개조식. |
+
+각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
 _(스킬은 계속 추가됩니다.)_
 
