@@ -1,6 +1,16 @@
 # skills-marketplace
 
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
+[![skills](https://img.shields.io/badge/skills-1-4C9A2A)](#수록-스킬)
+[![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
+[![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
+
 sungwooHa의 개인 **Claude Code 스킬 마켓플레이스**. 목적별 스킬을 한 레포에 모아두고, 필요한 것만 골라 설치합니다.
+
+<p align="center">
+  <img src="./plugins/travel-proposal/assets/desktop-cover.png" alt="travel-proposal 미리보기 — 커버" width="720">
+</p>
 
 ## 설치 (필요한 스킬만)
 

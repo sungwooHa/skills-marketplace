@@ -1,8 +1,27 @@
 # travel-proposal
 
+[![Claude Code](https://img.shields.io/badge/Claude%20Code-skill-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
+[![version](https://img.shields.io/badge/version-1.0.0-informational)](./.claude-plugin/plugin.json)
+[![design](https://img.shields.io/badge/design-Airbnb-ff385c)](./.claude/skills/travel-proposal/references/design-airbnb.md)
+[![output](https://img.shields.io/badge/output-self--contained%20HTML-4C9A2A)](#특징)
+[![maps](https://img.shields.io/badge/maps-offline%20interactive-2b6cb0)](#특징)
+[![license](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+
 여행 기획서(계획서)를 **오프라인에서도 동작하는 자립형 인터랙티브 HTML** 한 장으로 만들어 주는 Claude Code 스킬.
 
 파일 하나만 있으면 인터넷 없이도, 다른 사람에게 그대로 전달해도 사진·지도·줌·탭이 전부 동작합니다.
+
+## 스크린샷
+
+| 커버 | 일정 (좌: 인터랙티브 지도 · 우: 타임라인) |
+|:---:|:---:|
+| <img src="./assets/desktop-cover.png" alt="커버" width="420"> | <img src="./assets/desktop-days.png" alt="일정 — 지도와 타임라인" width="420"> |
+
+| 모바일 · 커피/디저트 카드 | 모바일 · 쇼핑 |
+|:---:|:---:|
+| <img src="./assets/mobile-cafe.png" alt="모바일 커피·디저트" width="240"> | <img src="./assets/mobile-shop.png" alt="모바일 쇼핑" width="240"> |
+
+> 예시는 고베 2026 기획서 산출물. 실제 지도는 줌인·줌아웃되며, 핀을 누르면 구글맵으로 연결됩니다.
 
 ## 특징
 
