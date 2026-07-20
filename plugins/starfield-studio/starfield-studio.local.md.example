@@ -1,0 +1,29 @@
+# Starfield Studio project config
+
+Copy this file to `.claude/starfield-studio.local.md` at your project root only if you need to move the
+skill's working directory. The skill reads it when it starts a job; a missing file just means the default applies.
+
+Format: a simple `key: value` line. Blank lines, `#` comments, and surrounding markdown prose are ignored.
+
+```
+# Directory holding this skill's specs, 콘티, and rendered output.
+# Project-root-relative or absolute. Default: starfield_studio
+asset_root: 00_ASSET/starfield_studio
+```
+
+## Keys
+
+| Key | Required | Default | Effect |
+|---|---|---|---|
+| `asset_root` | no | `starfield_studio` | Base dir for `specs/`, `conti/`, `out/` |
+
+The layout *under* `asset_root` is fixed and not configurable:
+
+```
+<asset_root>/specs/<name>.spec.json     # staging intent (the single source of truth)
+<asset_root>/conti/<name>.conti.html    # self-contained approval 콘티
+<asset_root>/out/<name>_*.gif|.mp4      # rendered output
+```
+
+Rendered GIF/MP4 files are binary build artifacts. If `asset_root` lives inside a git repo, consider
+gitignoring `<asset_root>/conti/` and `<asset_root>/out/` — both are reproducible from the spec.

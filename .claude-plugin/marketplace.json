@@ -14,6 +14,13 @@
       "description": "여행 기획서/계획서를 오프라인 자립형 HTML(주제탭·인터랙티브 지도·카드·Airbnb 디자인)로 제작. 한국어 개조식 산출물.",
       "version": "1.0.0",
       "keywords": ["travel", "itinerary", "여행", "기획서", "html", "airbnb-design", "korean", "offline-maps"]
+    },
+    {
+      "name": "starfield-studio",
+      "source": "./plugins/starfield-studio",
+      "description": "별(스타필드) 모션 에셋 제작 — 연출 의도를 spec(JSON)으로 기술 → 콘티 HTML 승인 게이트 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. 파생 HTML 복제 금지. 렌더에 Chrome·ffmpeg 필요.",
+      "version": "1.0.0",
+      "keywords": ["starfield", "별", "motion", "gif", "mp4", "canvas", "deterministic-render", "콘티", "keynote", "background"]
     }
   ]
 }

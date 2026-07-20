@@ -1,7 +1,7 @@
 # skills-marketplace
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
-[![skills](https://img.shields.io/badge/skills-1-4C9A2A)](#수록-스킬)
+[![skills](https://img.shields.io/badge/skills-2-4C9A2A)](#수록-스킬)
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 [![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
 [![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
@@ -34,6 +34,7 @@ cd skills-marketplace
 | 스킬 | 설명 |
 |---|---|
 | [**travel-proposal**](./plugins/travel-proposal) | 여행 기획서를 오프라인 자립형 인터랙티브 HTML(주제탭·지도·카드·Airbnb 디자인)로 제작. 한국어 개조식. |
+| [**starfield-studio**](./plugins/starfield-studio) | 별(스타필드) 모션 에셋 제작. spec(JSON) → 콘티 승인 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
@@ -57,9 +58,14 @@ _(스킬은 계속 추가됩니다.)_
 ```
 .claude-plugin/marketplace.json     # 전체 스킬 목록(플러그인 카탈로그)
 plugins/
-  travel-proposal/
+  travel-proposal/                  # ⚠ 레거시 레이아웃 (.claude/skills/ 중첩)
     .claude-plugin/plugin.json
     .claude/skills/travel-proposal/  SKILL.md + references/
+    README.md
+  starfield-studio/                 # ✅ 표준 레이아웃 (skills/ 자동 탐색)
+    .claude-plugin/plugin.json
+    skills/starfield-studio/         SKILL.md + references/ + assets/ + scripts/ + examples/
+    starfield-studio.local.md.example  # asset_root 주입 템플릿(선택)
     README.md
 install.sh                          # 특정 스킬만 로컬 심링크(선택)
 HOWTO-add-skill.md
