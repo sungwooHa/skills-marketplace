@@ -2,7 +2,7 @@
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
 [![skills](https://img.shields.io/badge/skills-2-4C9A2A)](#수록-스킬)
-[![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
+[![license](https://img.shields.io/badge/license-MIT%20(exceptions)-blue)](#라이선스)
 [![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
 [![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
 
@@ -82,4 +82,8 @@ LICENSE (MIT)
 
 ## 라이선스
 
-MIT
+MIT — **단, 제3자 콘텐츠는 예외.**
+
+- 이 저장소가 자체 작성한 코드·문서 = MIT ([LICENSE](./LICENSE))
+- `plugins/higgsfield/skills/higgsfield-generate/` = Higgsfield 배포 번들 v0.12.0 유래 제3자 콘텐츠. **MIT 아님**
+  (업스트림 라이선스 미상). 출처·범위는 [plugins/higgsfield/NOTICE](./plugins/higgsfield/NOTICE) 참조

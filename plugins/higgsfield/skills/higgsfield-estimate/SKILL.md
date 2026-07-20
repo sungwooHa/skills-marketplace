@@ -48,9 +48,48 @@ one money-critical key (`budget_cap_credits`) falls back to **asking the user**,
    total + comparison against `budget_cap_credits` (if `event_name` is set, label the budget line with it) + if possible,
    account balance·balance after deduction
 4. **Wait for explicit approval** — execute generation only after the user's `approval_keyword` (default "진행")
-5. **Record actual spend** — on completion, record the measured credits at `spend_ledger_path`; if `spend_ledger_path` is not
+5. **Write the approval token** — the moment the user gives the keyword, and only then (see "Approval token" below).
+   Without it the plugin's PreToolUse hook blocks every paid call
+6. **Record actual spend** — on completion, record the measured credits at `spend_ledger_path`; if `spend_ledger_path` is not
    configured, warn the user that the spend is unrecorded and skip. If the measurement differs from `references/price-table.md`,
    proceed with the real number and file the correction as a marketplace PR (see that file's correction policy)
+
+## Approval token (what makes the gate binding)
+
+This gate is enforced at execution time by the plugin's `PreToolUse` hook (`hooks/higgsfield-gate.js`), which blocks every
+paid `higgsfield` call unless a valid approval token is on disk. Prose alone does not stop a direct Bash call; the token does.
+
+**Write the token only after the user says the `approval_keyword`.** Never pre-write it, never write it on the user's behalf,
+and never widen it to cover work the estimate table did not present.
+
+Path: `.claude/.higgsfield-gate-approval.json` in the **project root** (create `.claude/` if missing).
+
+```json
+{
+  "approved_at": "2026-07-20T09:12:00+09:00",
+  "expires_at": "2026-07-20T09:42:00+09:00",
+  "runs_allowed": 3,
+  "runs_used": 0,
+  "estimated_credits": 216,
+  "scope": "seedance_2_0"
+}
+```
+
+| Field | Rule |
+|---|---|
+| `approved_at` | ISO8601, the moment the keyword was given |
+| `expires_at` | ISO8601, **default `approved_at` + 30 minutes**. An expired approval is not an approval — re-estimate |
+| `runs_allowed` | Integer. Exactly the run count the estimate table presented and the user approved — nothing rounded up |
+| `runs_used` | Starts at `0`. The hook increments it on every allowed paid call; do not edit it afterwards |
+| `estimated_credits` | The total from the estimate table (record only; the hook does not enforce it) |
+| `scope` | Substring the approved command must contain — normally the `job_set_type` (`seedance_2_0`), the workflow name, or the subcommand (`soul-id create`, `dtc-ads generate`). `"*"` means any paid call and should be avoided |
+
+The hook consumes one run per paid command, so `runs_allowed` is also the regeneration cap (`regen_cap_per_piece`) in practice:
+once it is spent, generation stops until a fresh estimate is approved. A different model or job type needs a new token —
+a `scope` mismatch blocks.
+
+The token is per-project runtime state. It is **never committed** — add `.claude/.higgsfield-gate-approval.json` to the
+project's `.gitignore`.
 
 ## Price lookup
 

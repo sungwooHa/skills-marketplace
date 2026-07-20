@@ -37,6 +37,46 @@ higgsfield-soul-id  →  (estimate 게이트 경유)  →  <soul_ref_id>  →  g
   대체하고, 파일 상단에 게이트 체인 절을 두어 generate 단독 발동 시에도 게이트로 라우팅됩니다.
 - 무료 호출(`generate cost`·`list`·`get`·`model list` 등)은 게이트 면제.
 
+## 게이트 강제 (PreToolUse 훅)
+
+게이트는 문서상 규칙이 아니라 **실행 시점에 훅으로 강제**됩니다. 산문만으로는 `higgsfield generate create ...`를
+Bash로 직접 실행하는 요청을 막지 못하므로, 이 플러그인은 `hooks/higgsfield-gate.js`(`PreToolUse` · matcher `Bash`)를
+함께 설치합니다.
+
+- **유료 호출** — `generate create`·`generate workflow`·`soul-id create`·`marketing-studio dtc-ads generate`·
+  `product-photoshoot`·`marketplace-cards`. 유효한 승인 토큰이 없으면 **차단**(exit 2)되고, 차단 사유가 에이전트에게 전달됩니다.
+- **무료 호출** — `generate cost`·`list`·`get`·`wait`·`model`·`workflow`·`account status`·`auth`·`upload create`·
+  `soul-id list|get|wait`·`marketing-studio ... list|get|fetch`·`--help`·`--cost-only`. 토큰 로직을 타기 **전에**
+  통과 판정하므로, 토큰이 깨져 있어도 무료 호출은 막히지 않습니다.
+- **Fail closed** — 파싱 실패·토큰 손상·판정 불가(미등록 `higgsfield` 하위명령)는 전부 차단. 돈이 나가는 경로에서는
+  열어두지 않습니다.
+
+### 승인 토큰
+
+`higgsfield-estimate`가 **사용자가 승인 키워드(기본 `진행`)를 말한 순간에만** 프로젝트 루트에
+`.claude/.higgsfield-gate-approval.json`을 씁니다.
+
+```json
+{
+  "approved_at": "2026-07-20T09:12:00+09:00",
+  "expires_at":  "2026-07-20T09:42:00+09:00",
+  "runs_allowed": 3,
+  "runs_used": 0,
+  "estimated_credits": 216,
+  "scope": "seedance_2_0"
+}
+```
+
+훅은 ① 존재 ② 미만료(기본 30분) ③ `runs_used < runs_allowed` ④ 명령이 `scope`를 포함 — 네 조건을 모두 만족할 때만
+통과시키고, 통과시키면서 `runs_used`를 증가시킵니다. 따라서 **승인 1회가 무제한 생성을 허가하지 못하며**, `runs_allowed`가
+사실상 재생성 상한(`regen_cap_per_piece`)으로 동작합니다. 모델·작업이 바뀌면 `scope` 불일치로 차단되므로 재견적이 필요합니다.
+
+이 파일은 **프로젝트별 런타임 상태**이며 커밋 대상이 아닙니다. 사용 프로젝트의 `.gitignore`에 추가하세요:
+
+```gitignore
+.claude/.higgsfield-gate-approval.json
+```
+
 ## 설치
 
 ```
@@ -98,8 +138,10 @@ CLI 조회 실패 시에만 [`skills/higgsfield-estimate/references/price-table.
 
 - **업스트림 라이선스: 미상.** 배포 번들에 라이선스 파일·허락 문구가 없었습니다. 이 레포는 해당 파일에 대해
   어떤 라이선스도 주장하지 않으며, 재배포 권한을 보유한다고 주장하지 않습니다. **재배포 권한은 미해결 상태입니다.**
-- **수정됨.** 이 번들의 게이트 체인(conti G1 → estimate G3 → generate)을 강제하도록 패치했고,
-  업스트림의 "비용 사전 산정 생략" UX 규칙을 대체했습니다. 원본과 바이트 동일하지 않으며 `version: 0.12.0+gated`로 표기합니다.
+- **수정됨(2건).** ① 이 번들의 게이트 체인(conti G1 → estimate G3 → generate)을 강제하도록 패치하고 업스트림의
+  "비용 사전 산정 생략" UX 규칙을 대체. ② 업스트림 `allowed-tools: Bash` 필드 삭제 — 파일 접근을 막아 같은 파일의
+  "Load on demand: `references/…`" 지시 12건을 스스로 무력화하고 있었기 때문. 원본과 바이트 동일하지 않으며
+  `version: 0.12.0+gated`로 표기합니다.
 - 루트 MIT 라이선스는 이 파일에 **적용되지 않습니다**. 나머지 3개 스킬(conti·estimate·soul-id)은 이 레포 저작물로 MIT입니다.
 - 상세: [`NOTICE`](./NOTICE). "Higgsfield" 명칭·상표는 권리자 소유이며, 여기서의 사용은 CLI·서비스를 지칭하는
   기술적 표현으로 제휴·보증을 의미하지 않습니다.
@@ -112,6 +154,9 @@ plugins/higgsfield/
   README.md
   NOTICE                             # 제3자 콘텐츠 출처 고지 (higgsfield-generate)
   higgsfield.local.md.example
+  hooks/
+    hooks.json                       # PreToolUse(Bash) 등록
+    higgsfield-gate.js               # 유료 호출 차단 · 승인 토큰 검증·소모
   skills/
     higgsfield-conti/SKILL.md
     higgsfield-estimate/SKILL.md

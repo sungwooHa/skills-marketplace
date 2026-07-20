@@ -27,14 +27,13 @@ description: |
   product photoshoots, marketplace listing cards,
   text/chat/TTS tasks.
 argument-hint: "[prompt-or-analysis-request] [--model <name>] [--image|--video <path-or-id>]"
-allowed-tools: Bash
 ---
 
 # Higgsfield Generate
 
 Submit jobs to any Higgsfield model. Wraps the `higgsfield` CLI. Covers generic image/video/3D/audio generation, Marketing Studio (branded ads, avatars, products, hooks, settings), and, secondarily, Virality Predictor video scoring.
 
-> **Modified from upstream.** This file derives from the Higgsfield-distributed skill bundle `higgsfield-generate` v0.12.0 and is **not** byte-identical to it. The divergence is the gate chain below (and the UX rule it replaces); everything else is upstream content. Version is stamped `0.12.0+gated` to make that explicit. Upstream license is unspecified — see the plugin `NOTICE`.
+> **Modified from upstream.** This file derives from the Higgsfield-distributed skill bundle `higgsfield-generate` v0.12.0 and is **not** byte-identical to it. Two deliberate divergences: (1) the gate chain below and the UX rule it replaces; (2) upstream's `allowed-tools: Bash` frontmatter field is removed, because it revoked file access and so broke this file's own twelve "Load on demand: `references/…`" instructions. Everything else is upstream content. Version is stamped `0.12.0+gated` to make that explicit. Upstream license is unspecified — see the plugin `NOTICE`.
 
 ## Gate chain — required before spending
 
@@ -49,6 +48,8 @@ The gate applies to every credit-spending call in this file — `higgsfield gene
 **Exempt (free, run freely):** `higgsfield generate cost`, `generate list`, `generate get`, `model list`, `model get`, `workflow list`, `workflow get`, `account status`, and the `marketing-studio ... list` discovery commands.
 
 If a generation request arrives without the gates passed, route to `higgsfield-conti` (video) or `higgsfield-estimate` (everything else) first — do not generate.
+
+**Enforced at execution time.** The plugin ships a `PreToolUse` hook (`hooks/higgsfield-gate.js`) that inspects every Bash command and blocks the paid calls above unless `higgsfield-estimate` has written a valid approval token (`.claude/.higgsfield-gate-approval.json`). The exempt calls listed above always pass through. A blocked command means the estimate gate has not been passed — run it and get the user's approval keyword. Do not hand-write the token, edit its counters, or otherwise work around the block; the approval has to come from the user.
 
 ## Step 0 — Bootstrap
 

@@ -3,3 +3,6 @@
 _workspace/
 tmp/
 *.log
+
+# higgsfield plugin: per-project approval token (runtime state, never commit)
+.claude/.higgsfield-gate-approval.json

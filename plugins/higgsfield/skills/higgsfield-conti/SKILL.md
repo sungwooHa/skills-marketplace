@@ -40,7 +40,9 @@ both change behavior, and both have defined fallbacks (ask the user for palette�
 - Show the user the table first and confirm the narration (text-stage feedback = free)
 
 ### 2. Generate the 콘티 image (measurement-verified prompt pattern)
-After applying the `higgsfield-estimate` discipline (the 콘티 is paid too):
+After applying the `higgsfield-estimate` discipline (the 콘티 is paid too). The plugin's `PreToolUse` hook enforces this at
+execution time — if this command comes back blocked, the estimate gate has not been passed; run `higgsfield-estimate` and get
+the user's approval keyword rather than trying to route around it:
 
 ```bash
 higgsfield generate create gpt_image_2 --prompt "<아래 템플릿>" --aspect_ratio 16:9 --resolution 2k --wait

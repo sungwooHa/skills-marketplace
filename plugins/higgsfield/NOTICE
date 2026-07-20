@@ -14,11 +14,14 @@ by Higgsfield (bundle skill name `higgsfield-generate`, upstream `version: 0.12.
 - Upstream license: **unspecified.** No license file or license grant accompanied
   the distributed bundle. This repository asserts no license over this content and
   claims no permission to redistribute it. Redistribution rights are unresolved.
-- Modified: yes. `SKILL.md` has been patched to require this bundle's gate chain
-  (higgsfield-conti G1 → higgsfield-estimate G3 → generate) before any
-  credit-spending call, replacing the upstream "don't pre-estimate cost" UX rule.
-  The modified file is stamped `version: 0.12.0+gated` and carries an inline
-  "Modified from upstream" note. It is not byte-identical to upstream.
+- Modified: yes, in two places. (1) `SKILL.md` has been patched to require this
+  bundle's gate chain (higgsfield-conti G1 → higgsfield-estimate G3 → generate)
+  before any credit-spending call, replacing the upstream "don't pre-estimate
+  cost" UX rule. (2) Upstream's `allowed-tools: Bash` frontmatter field has been
+  removed, because it revoked file access and thereby broke the file's own twelve
+  "Load on demand: `references/…`" instructions. The modified file is stamped
+  `version: 0.12.0+gated` and carries an inline "Modified from upstream" note.
+  It is not byte-identical to upstream.
 - Trademarks: "Higgsfield" and related names/marks belong to their owner. Their use
   here is descriptive — to name the CLI and service these skills drive — and implies
   no affiliation with or endorsement by Higgsfield.

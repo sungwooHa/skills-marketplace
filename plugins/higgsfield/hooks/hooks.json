@@ -1,0 +1,18 @@
+{
+  "description": "Higgsfield spend gate — blocks paid `higgsfield` CLI calls unless the higgsfield-estimate gate (G3) wrote a valid approval token. Free/read-only calls pass through untouched.",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node",
+            "args": ["${CLAUDE_PLUGIN_ROOT}/hooks/higgsfield-gate.js"],
+            "timeout": 10
+          }
+        ]
+      }
+    ]
+  }
+}

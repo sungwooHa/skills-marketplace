@@ -26,6 +26,10 @@ Before running `create`, route through `higgsfield-estimate` exactly as `higgsfi
 (`--soul-2` vs `--soul-cinematic`), image count, run count, and expected credits, and wait for the configured
 approval keyword (default "진행"). `list`, `get`, and `wait` are free — no gate needed for those.
 
+This is enforced, not advisory: the plugin's `PreToolUse` hook blocks `soul-id create` unless the estimate gate wrote a valid
+approval token. A blocked `create` means the gate has not been passed — run `higgsfield-estimate` and get the user's approval
+keyword rather than trying to route around the block.
+
 At gate entry, read `.claude/higgsfield.local.md` from the project root if present (see `higgsfield-estimate` Step 0 for the
 canonical parsing rules and key table); this skill uses `approval_keyword` and `escalation_role`.
 
