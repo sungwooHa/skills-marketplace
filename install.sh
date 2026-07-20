@@ -40,8 +40,10 @@ run() { echo "+ $*"; [ "$DRYRUN" = 1 ] || "$@"; }
 
 install_skill() {
   local name="$1"
-  local skdir="$PLUGINS_DIR/$name/.claude/skills"
-  [ -d "$skdir" ] || { echo "없음: $name ($skdir)"; return 1; }
+  # 표준 레이아웃(plugins/<name>/skills) 우선, 레거시(.claude/skills) 폴백
+  local skdir="$PLUGINS_DIR/$name/skills"
+  [ -d "$skdir" ] || skdir="$PLUGINS_DIR/$name/.claude/skills"
+  [ -d "$skdir" ] || { echo "없음: $name (skills/ 또는 .claude/skills/ 없음)"; return 1; }
   for s in "$skdir"/*/; do
     local sk; sk="$(basename "$s")"
     local dest="$CLAUDE_HOME/skills/$sk" src="${s%/}"
