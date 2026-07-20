@@ -1,0 +1,12 @@
+{
+  "name": "higgsfield",
+  "version": "1.0.0",
+  "description": "Higgsfield 영상·이미지 생성 4스킬 번들 (모두 함께 설치). 게이트 체인: higgsfield-conti(G1 콘티 승인) → higgsfield-estimate(G3 견적 승인) → higgsfield-generate(생성 엔진). higgsfield-soul-id는 얼굴·정체성 일관성용 Soul 레퍼런스를 학습해 generate가 소비. 무콘티 생성 금지·무견적 생성 금지. 프로젝트별 예산·정책은 .claude/higgsfield.local.md로 주입.",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/higgsfield",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["higgsfield", "video", "image", "storyboard", "콘티", "견적", "credits", "soul-id", "generate"]
+}

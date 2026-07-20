@@ -1,0 +1,46 @@
+# Higgsfield project config
+
+Copy this file to `.claude/higgsfield.local.md` at your project root and fill in the values.
+The Higgsfield skills read it at gate entry; a missing file just means every key falls back to its default.
+
+Format: simple `key: value` lines. Blank lines, `#` comments, and surrounding markdown prose are ignored.
+
+```
+# Label shown on the budget line of the estimate table. Optional.
+event_name: <project or event name>
+
+# Total credit budget for this project. If unset, the estimate gate ASKS you before presenting an estimate.
+budget_cap_credits: 500
+
+# Max regeneration runs per piece before stopping and escalating. Default: 3
+regen_cap_per_piece: 3
+
+# Document holding the plate/anchor spec and the style lock (palette·mood·negatives).
+# If unset, the 콘티 gate skips style-lock inheritance and asks you for palette·mood·negatives.
+style_source: <path to your style/production-plan doc, incl. section refs>
+
+# Where actual credit spend is recorded after each run.
+# If unset, the estimate gate WARNS that spend is unrecorded and skips the recording step.
+spend_ledger_path: <path to your spend ledger, incl. section ref>
+
+# Who to escalate to when a cap is exceeded or training/generation repeatedly fails. Default: the user
+escalation_role: the user
+
+# The word the user must say to approve a gate. Default: 진행
+approval_keyword: 진행
+```
+
+## Keys
+
+| Key | Required | Default | Used by |
+|---|---|---|---|
+| `event_name` | no | none (attribution omitted) | estimate |
+| `budget_cap_credits` | no | none — **gate asks you** | estimate |
+| `regen_cap_per_piece` | no | `3` | estimate |
+| `style_source` | no | none — **gate asks you** for palette·mood·negatives | conti |
+| `spend_ledger_path` | no | none — **warn + skip** recording | estimate |
+| `escalation_role` | no | `the user` | conti, estimate, soul-id |
+| `approval_keyword` | no | `진행` | conti, estimate, soul-id |
+
+Keep this file out of version control if the budget or ledger path is sensitive — `.claude/*.local.md` is a conventional
+gitignore target.

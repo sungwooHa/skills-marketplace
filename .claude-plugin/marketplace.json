@@ -14,6 +14,13 @@
       "description": "여행 기획서/계획서를 오프라인 자립형 HTML(주제탭·인터랙티브 지도·카드·Airbnb 디자인)로 제작. 한국어 개조식 산출물.",
       "version": "1.0.0",
       "keywords": ["travel", "itinerary", "여행", "기획서", "html", "airbnb-design", "korean", "offline-maps"]
+    },
+    {
+      "name": "higgsfield",
+      "source": "./plugins/higgsfield",
+      "description": "Higgsfield 영상·이미지 생성 4스킬 번들 — 콘티(G1) → 견적(G3) → 생성 게이트 체인 + Soul 레퍼런스 학습. 무콘티·무견적 생성 금지. 프로젝트별 예산은 .claude/higgsfield.local.md로 주입.",
+      "version": "1.0.0",
+      "keywords": ["higgsfield", "video", "image", "storyboard", "콘티", "견적", "credits", "soul-id", "generate"]
     }
   ]
 }

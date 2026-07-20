@@ -1,7 +1,7 @@
 # skills-marketplace
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
-[![skills](https://img.shields.io/badge/skills-1-4C9A2A)](#수록-스킬)
+[![skills](https://img.shields.io/badge/skills-2-4C9A2A)](#수록-스킬)
 [![license](https://img.shields.io/badge/license-MIT-blue)](./LICENSE)
 [![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
 [![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
@@ -34,6 +34,7 @@ cd skills-marketplace
 | 스킬 | 설명 |
 |---|---|
 | [**travel-proposal**](./plugins/travel-proposal) | 여행 기획서를 오프라인 자립형 인터랙티브 HTML(주제탭·지도·카드·Airbnb 디자인)로 제작. 한국어 개조식. |
+| [**higgsfield**](./plugins/higgsfield) | Higgsfield 영상·이미지 생성 4스킬 번들. 콘티(G1) → 견적(G3) → 생성 게이트 체인 + Soul 레퍼런스 학습. 무콘티·무견적 생성 금지. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
@@ -60,6 +61,11 @@ plugins/
   travel-proposal/
     .claude-plugin/plugin.json
     .claude/skills/travel-proposal/  SKILL.md + references/
+    README.md
+  higgsfield/
+    .claude-plugin/plugin.json
+    skills/higgsfield-{conti,estimate,generate,soul-id}/  SKILL.md + references/
+    higgsfield.local.md.example      # 프로젝트별 예산·정책 주입 템플릿
     README.md
 install.sh                          # 특정 스킬만 로컬 심링크(선택)
 HOWTO-add-skill.md
