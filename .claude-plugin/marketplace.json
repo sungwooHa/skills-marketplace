@@ -21,6 +21,13 @@
       "description": "Higgsfield 영상·이미지 생성 4스킬 번들 — 콘티(G1) → 견적(G3) → 생성 게이트 체인 + Soul 레퍼런스 학습. 무콘티·무견적 생성 금지. 프로젝트별 예산은 .claude/higgsfield.local.md로 주입.",
       "version": "1.0.0",
       "keywords": ["higgsfield", "video", "image", "storyboard", "콘티", "견적", "credits", "soul-id", "generate"]
+    },
+    {
+      "name": "starfield-studio",
+      "source": "./plugins/starfield-studio",
+      "description": "별(스타필드) 모션 에셋 제작 — 연출 의도를 spec(JSON)으로 기술 → 콘티 HTML 승인 게이트 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. 파생 HTML 복제 금지. 렌더에 Chrome·ffmpeg 필요.",
+      "version": "1.0.0",
+      "keywords": ["starfield", "별", "motion", "gif", "mp4", "canvas", "deterministic-render", "콘티", "keynote", "background"]
     }
   ]
 }

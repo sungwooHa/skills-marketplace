@@ -35,6 +35,7 @@ cd skills-marketplace
 |---|---|
 | [**travel-proposal**](./plugins/travel-proposal) | 여행 기획서를 오프라인 자립형 인터랙티브 HTML(주제탭·지도·카드·Airbnb 디자인)로 제작. 한국어 개조식. |
 | [**higgsfield**](./plugins/higgsfield) | Higgsfield 영상·이미지 생성 4스킬 번들. 콘티(G1) → 견적(G3) → 생성 게이트 체인 + Soul 레퍼런스 학습. 무콘티·무견적 생성 금지. |
+| [**starfield-studio**](./plugins/starfield-studio) | 별(스타필드) 모션 에셋 제작. spec(JSON) → 콘티 승인 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
@@ -66,8 +67,14 @@ plugins/
   higgsfield/                       # ✅ 표준 레이아웃 (skills/ 자동 탐색)
     .claude-plugin/plugin.json
     skills/higgsfield-{conti,estimate,generate,soul-id}/  SKILL.md + references/
+    hooks/                           # 지출 게이트 PreToolUse 훅 + 회귀 테스트
     higgsfield.local.md.example      # 프로젝트별 예산·정책 주입 템플릿
     NOTICE                           # 제3자 콘텐츠 출처 고지 (generate는 MIT 아님)
+    README.md
+  starfield-studio/                 # ✅ 표준 레이아웃 (skills/ 자동 탐색)
+    .claude-plugin/plugin.json
+    skills/starfield-studio/         SKILL.md + references/ + assets/ + scripts/ + examples/
+    starfield-studio.local.md.example  # asset_root 주입 템플릿(선택)
     README.md
 install.sh                          # 특정 스킬만 로컬 심링크(선택)
 HOWTO-add-skill.md
