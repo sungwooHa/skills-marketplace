@@ -1,0 +1,12 @@
+{
+  "name": "starfield-studio",
+  "version": "1.0.0",
+  "description": "별(스타필드) 모션 에셋 제작 스킬. 연출 의도를 spec(JSON)으로 기술 → 콘티 HTML 승인 게이트 → 로컬 결정론 렌더로 GIF/MP4 산출. 같은 spec = 같은 픽셀(시드 PRNG + 고정 스텝)이라 콘티에서 본 프레임과 렌더 결과가 프레임 단위로 일치한다. 파생 HTML 복제·직접 수정 금지 — 수정은 항상 spec 으로. 로컬 렌더라 과금 없음(견적 게이트 없음). 렌더에 로컬 Chrome/Chromium 과 ffmpeg 필요.",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/starfield-studio",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["starfield", "별", "motion", "gif", "mp4", "canvas", "deterministic-render", "콘티", "keynote", "background"]
+}

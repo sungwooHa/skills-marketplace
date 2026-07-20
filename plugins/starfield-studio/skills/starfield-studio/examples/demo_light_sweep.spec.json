@@ -1,0 +1,27 @@
+{
+  "name": "demo_light_sweep",
+  "width": 960,
+  "height": 540,
+  "fps": 30,
+  "duration": 6,
+  "loop": true,
+  "seed": 1234,
+  "orbs": [
+    {
+      "t": [0.5, 5.5],
+      "path": [[0.05, 0.82], [0.42, 0.5], [0.68, 0.42], [0.95, 0.15]],
+      "size": 70,
+      "color": "#7fb2ff",
+      "trail": 0.5,
+      "boost": { "radius": 150, "brighten": 0.7 }
+    }
+  ],
+  "pulses": [
+    {
+      "t": [2.2, 4.6],
+      "zone": { "type": "circle", "x": 0.72, "y": 0.32, "r": 0.18 },
+      "effect": "sparkle",
+      "strength": 1.0
+    }
+  ]
+}

@@ -1,0 +1,1057 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Starfield Studio 콘티</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #01030a; overflow: hidden; }
+  #stage { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; }
+  canvas { max-width: 100vw; max-height: 100vh; box-shadow: 0 0 0 1px rgba(255,255,255,0.08); }
+  .ctl {
+    position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 16px; border-radius: 999px;
+    background: rgba(255,255,255,0.06); backdrop-filter: blur(8px);
+    font: 12px/1 -apple-system, system-ui, sans-serif; color: rgba(255,255,255,0.75);
+    user-select: none; z-index: 10; white-space: nowrap;
+  }
+  .ctl input[type=range] { width: 260px; accent-color: #3b82f6; }
+  .ctl button {
+    border: 1px solid rgba(255,255,255,0.18); background: transparent;
+    color: rgba(255,255,255,0.85); border-radius: 999px; padding: 5px 12px;
+    font: inherit; cursor: pointer;
+  }
+  .ctl button:hover { background: rgba(255,255,255,0.1); }
+  .ctl .meta { color: rgba(255,255,255,0.45); }
+  #warn {
+    position: fixed; top: 16px; left: 50%; transform: translateX(-50%);
+    padding: 8px 14px; border-radius: 8px; background: rgba(180,80,20,0.25);
+    border: 1px solid rgba(255,160,80,0.4); color: rgba(255,210,170,0.95);
+    font: 12px/1.5 -apple-system, system-ui, sans-serif; z-index: 10;
+  }
+</style>
+</head>
+<body>
+<div id="stage"><canvas id="c"></canvas></div>
+<div class="ctl" id="ctl">
+  <span id="title"></span>
+  <button id="play">⏸ 정지</button>
+  <input id="scrub" type="range" min="0" max="0" value="0" />
+  <span id="clock"></span>
+  <span class="meta" id="meta"></span>
+</div>
+<div id="warn" hidden></div>
+
+<script>
+/* build_conti.mjs 가 아래 마커 사이에 spec JSON 을 주입한다. 직접 수정 금지. */
+window.__SPEC = /*__SPEC__*/{}/*__END_SPEC__*/;
+
+/*
+ * Starfield Studio 엔진 — starfield_origin.html 기반, "의도(spec)" 구동형으로 재구성.
+ *
+ * 원본과의 차이:
+ *  - Math.random → 시드 PRNG(mulberry32): 같은 spec = 항상 같은 픽셀 (결정론).
+ *  - 마우스 인터랙션 제거 (에셋 산출물엔 비결정 요소 금지).
+ *  - progress/collapse 는 슬라이더가 아닌 spec.timeline 키프레임으로 구동.
+ *  - 신규 프리미티브: orbs(이동 광원 + 트레일 + 주변 별 증광), pulses(시간창 × 공간 존 반짝임).
+ *  - loop:true 시 별 드리프트를 해석적(리사주) 위치로, 트윙클 주파수를 2π/duration 배수로
+ *    양자화 → 이음매 없는 완전 루프. (루프 모드에선 progress/collapse 미지원)
+ *  - 렌더 훅: __getRenderInfo() / __renderFrame(i) — render.mjs 가 프레임 단위로 캡처.
+ */
+(function () {
+'use strict';
+
+// ===== spec 병합 =====
+var DEFAULTS = {
+  name: 'starfield',
+  width: 1920, height: 1080,
+  fps: 30, duration: 6,
+  loop: false,
+  seed: 1234,
+  bg: '#030712',
+  stars: { density: 7500, max: 340, brightRatio: 0.22, sparkleRatio: 0.07, palette: null, sizeScale: 1, glow: 0 },
+  connections: { enabled: true, dist: 90, opacity: 0.5 },
+  align: { size: 0.4, ratio: 0.82, tint: '#3b82f6', paths: null, pull: 1 },
+  collapseDur: 1.5,
+  timeline: [],
+  orbs: [],
+  pulses: [],
+  dots: [],
+  mask: null
+};
+function isObj(v) { return v && typeof v === 'object' && !Array.isArray(v); }
+function merge(base, over) {
+  var out = {};
+  for (var k in base) out[k] = base[k];
+  for (var k2 in over) {
+    out[k2] = (isObj(base[k2]) && isObj(over[k2])) ? merge(base[k2], over[k2]) : over[k2];
+  }
+  return out;
+}
+var S = merge(DEFAULTS, window.__SPEC || {});
+
+var W = S.width, H = S.height;
+var FPS = S.fps, DUR = S.duration;
+var FRAMES = Math.max(1, Math.round(DUR * FPS));
+var LOOP = !!S.loop;
+// 내부 시뮬레이션은 원본(60fps 캘리브레이션)에 맞춰 서브스텝으로 돈다
+var SUB = Math.max(1, Math.round(60 / FPS));
+var DT = 1 / (FPS * SUB);
+var TAU = Math.PI * 2;
+
+var canvas = document.getElementById('c');
+canvas.width = W; canvas.height = H;
+var c = canvas.getContext('2d');
+
+var marginX = W * 0.12;
+var marginY = H * 0.12;
+var CONN_DIST = S.connections.dist;
+var CELL = CONN_DIST;
+function cellKey(gx, gy) { return (gx + 1024) * 4096 + (gy + 1024); }
+
+// ===== 시드 PRNG =====
+function mulberry32(a) {
+  return function () {
+    a |= 0; a = (a + 0x6D2B79F5) | 0;
+    var t = Math.imul(a ^ (a >>> 15), 1 | a);
+    t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+var rng = mulberry32(S.seed >>> 0);
+
+function smoothstep(x) {
+  var t = Math.max(0, Math.min(1, x));
+  return t * t * (3 - 2 * t);
+}
+function clamp01(x) { return Math.max(0, Math.min(1, x)); }
+function hexToRgb(hex) {
+  var m = /^#?([0-9a-f]{6})$/i.exec(hex || '');
+  if (!m) return [255, 255, 255];
+  var n = parseInt(m[1], 16);
+  return [(n >> 16) & 255, (n >> 8) & 255, n & 255];
+}
+// 별 id 기반 안정 해시 (spec 과 무관하게 재현됨)
+function hash01(i, salt) {
+  var x = Math.sin(i * 127.1 + salt * 311.7) * 43758.5453;
+  return x - Math.floor(x);
+}
+// 루프 모드: 각속도를 2π/DUR 의 정수배로 양자화 → t=0 과 t=DUR 위상 일치
+function qFreq(v) {
+  var k = Math.max(1, Math.round(v * DUR / TAU));
+  return k * TAU / DUR;
+}
+
+// ===== 기본 정렬 심볼 — 정육각형 윤곽 (align.paths 미지정 시 기본) =====
+// 브랜드 로고를 쓰려면 spec 의 align.paths 에 해당 SVG path 를 넣는다 (references/spec-guide.md 참고).
+var HEX_PETALS = [
+  { d: 'M0 -50 L43.3 -25 L43.3 25 L0 50 L-43.3 25 L-43.3 -25 Z', cx: 0, cy: 0 }
+];
+
+// ===== 정렬 그룹 타깃 생성 (SVG path 또는 텍스트) =====
+var FONT_FAMILY = '-apple-system, "Apple SD Gothic Neo", "Helvetica Neue", sans-serif';
+
+function bboxOf(pts) {
+  var minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+  for (var k = 0; k < pts.length; k++) {
+    var x = pts[k][0], y = pts[k][1];
+    if (x < minX) minX = x; if (y < minY) minY = y;
+    if (x > maxX) maxX = x; if (y > maxY) maxY = y;
+  }
+  return { minX: minX, minY: minY, maxX: maxX, maxY: maxY };
+}
+
+function prepPaths(petals) {
+  // SVG path 둘레를 길이 비례로 촘촘히 샘플 (글자처럼 path 길이가 달라도 밀도 균일)
+  var ns = 'http://www.w3.org/2000/svg';
+  var svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('width', '0'); svg.setAttribute('height', '0');
+  svg.style.position = 'absolute'; svg.style.left = '-9999px'; svg.style.visibility = 'hidden';
+  document.body.appendChild(svg);
+  var pts = [];
+  var totalLen = 0;
+  try {
+    var els = [], lens = [];
+    for (var p = 0; p < petals.length; p++) {
+      var path = document.createElementNS(ns, 'path');
+      path.setAttribute('d', petals[p].d);
+      svg.appendChild(path);
+      var len = path.getTotalLength();
+      els.push(path); lens.push(len); totalLen += len;
+    }
+    var DENSE = 800;
+    for (var p2 = 0; p2 < petals.length; p2++) {
+      var petal = petals[p2];
+      var n = Math.max(2, Math.round(DENSE * (totalLen ? lens[p2] / totalLen : 1 / petals.length)));
+      for (var i = 0; i < n; i++) {
+        var pt = els[p2].getPointAtLength((i / n) * lens[p2]);
+        pts.push([pt.x + (petal.cx || 0), pt.y + (petal.cy || 0)]);
+      }
+    }
+  } finally {
+    document.body.removeChild(svg);
+  }
+  return { pts: pts, even: true, rawLen: totalLen, box: bboxOf(pts) };
+}
+
+function prepText(txt) {
+  // 실제 폰트로 오프스크린 렌더 → 윤곽(또는 채움) 픽셀 추출. 한글 포함 임의 문자열 지원.
+  var fontPx = 240;
+  var font = (txt.weight || 800) + ' ' + fontPx + 'px ' + (txt.font || FONT_FAMILY);
+  var oc = document.createElement('canvas');
+  var g2 = oc.getContext('2d', { willReadFrequently: true });
+  g2.font = font;
+  oc.width = Math.ceil(g2.measureText(txt.value).width) + 60;
+  oc.height = Math.ceil(fontPx * 1.7);
+  g2.font = font; // 캔버스 리사이즈가 상태를 초기화하므로 재설정
+  g2.textBaseline = 'middle';
+  g2.fillStyle = '#fff';
+  g2.fillText(txt.value, 30, oc.height / 2);
+  var w = oc.width, h = oc.height;
+  var data = g2.getImageData(0, 0, w, h).data;
+  function on(x, y) { return x >= 0 && y >= 0 && x < w && y < h && data[(y * w + x) * 4 + 3] > 128; }
+  var mode = txt.mode || 'outline';
+  var step = mode === 'fill' ? 3 : 1;
+  var pts = [];
+  for (var y = 0; y < h; y += step) {
+    for (var x = 0; x < w; x += step) {
+      if (!on(x, y)) continue;
+      if (mode === 'fill' || !(on(x - 1, y) && on(x + 1, y) && on(x, y - 1) && on(x, y + 1))) pts.push([x, y]);
+    }
+  }
+  // rawLen ≈ 둘레 근사 (에지 픽셀은 안팎 이중이라 보정)
+  return { pts: pts, even: false, mode: mode, rawLen: pts.length * (mode === 'fill' ? 1.2 : 0.55), box: bboxOf(pts) };
+}
+
+function prepGroup(g) {
+  if (g.__prep) return g.__prep;
+  var prep = g.text ? prepText(g.text) : prepPaths(g.paths || HEX_PETALS);
+  var box = prep.box;
+  var bw = box.maxX - box.minX || 1, bh = box.maxY - box.minY || 1;
+  // 텍스트는 높이 기준(여러 그룹 간 서체 크기 일관), path 는 최대변 기준
+  var basis = g.text ? bh : Math.max(bw, bh);
+  prep.scale = (g.size * Math.min(W, H)) / basis;
+  prep.cx = (box.minX + box.maxX) / 2;
+  prep.cy = (box.minY + box.maxY) / 2;
+  prep.measure = prep.rawLen * prep.scale; // 화면 좌표계 둘레 (그룹 간 별 배분 기준)
+  g.__prep = prep;
+  return prep;
+}
+
+function sampleGroupTargets(g, count) {
+  var prep = prepGroup(g);
+  if (!prep.pts.length || count < 1) return [];
+  var atX = g.at[0] * W, atY = g.at[1] * H;
+  function toScreen(p) { return [(p[0] - prep.cx) * prep.scale + atX, (p[1] - prep.cy) * prep.scale + atY]; }
+  var out = [];
+  if (prep.even) {
+    for (var i = 0; i < count; i++) out.push(toScreen(prep.pts[Math.floor(i * prep.pts.length / count)]));
+    return out;
+  }
+  // 텍스트: 결정론 셔플 + 최소간격 선별 (윤곽 위 고른 분포)
+  var idx = prep.pts.map(function (_, i2) { return i2; });
+  for (var k = idx.length - 1; k > 0; k--) {
+    var j = Math.floor(rng() * (k + 1));
+    var tmp = idx[k]; idx[k] = idx[j]; idx[j] = tmp;
+  }
+  var minDist;
+  if (prep.mode === 'fill') {
+    // 채움: 면적 기준 2D 간격 (후보는 3px 그리드 → 픽셀 면적 ≈ 후보수×9)
+    var areaScreen = prep.pts.length * 9 * prep.scale * prep.scale;
+    minDist = Math.sqrt(areaScreen / count) * 0.75;
+  } else {
+    minDist = (prep.measure / count) * 0.55;
+  }
+  var md2 = minDist * minDist;
+  var rest = [];
+  for (var q = 0; q < idx.length && out.length < count; q++) {
+    var sp = toScreen(prep.pts[idx[q]]);
+    var ok = true;
+    for (var v = out.length - 1; v >= 0; v--) {
+      var dx = out[v][0] - sp[0], dy = out[v][1] - sp[1];
+      if (dx * dx + dy * dy < md2) { ok = false; break; }
+    }
+    if (ok) out.push(sp); else rest.push(sp);
+  }
+  for (var w2 = 0; w2 < rest.length && out.length < count; w2++) out.push(rest[w2]);
+  return out;
+}
+
+// ===== timeline 평가 =====
+var progressKfs = (S.timeline || []).filter(function (k) { return typeof k.progress === 'number'; })
+  .sort(function (a, b) { return a.t - b.t; });
+var collapseKfs = (S.timeline || []).filter(function (k) { return typeof k.collapse === 'boolean'; })
+  .sort(function (a, b) { return a.t - b.t; });
+
+function kfsValueAt(kfs, t) {
+  if (!kfs.length) return 0;
+  if (t <= kfs[0].t) return kfs[0].progress;
+  for (var i = 1; i < kfs.length; i++) {
+    var a = kfs[i - 1], b = kfs[i];
+    if (t <= b.t) {
+      var u = (t - a.t) / Math.max(1e-6, b.t - a.t);
+      if (b.ease !== 'linear') u = smoothstep(u);
+      return a.progress + (b.progress - a.progress) * u;
+    }
+  }
+  return kfs[kfs.length - 1].progress;
+}
+
+// 정렬 그룹 — spec.groups (다중 심볼/글자, 각자 위치·타이밍) 또는 구형 align+timeline 을 단일 그룹으로
+function normKfs(list) {
+  return (list || []).filter(function (k) { return typeof k.progress === 'number'; })
+    .sort(function (a, b) { return a.t - b.t; });
+}
+var GROUPS = [];
+if (S.groups && S.groups.length) {
+  GROUPS = S.groups.map(function (g) {
+    return { text: g.text || null, paths: g.paths || null, size: g.size || 0.4,
+             at: g.at || [0.5, 0.5], tint: g.tint || S.align.tint, kfs: normKfs(g.timeline) };
+  });
+} else if (progressKfs.length) {
+  GROUPS = [{ text: null, paths: S.align.paths, size: S.align.size,
+              at: [0.5, 0.5], tint: S.align.tint, kfs: progressKfs }];
+}
+function groupAlignsAt(t) {
+  return GROUPS.map(function (g) { return LOOP ? 0 : kfsValueAt(g.kfs, t); });
+}
+function collapseAt(t) {
+  if (LOOP || !collapseKfs.length) return 0;
+  var on = false, t0 = 0;
+  for (var i = 0; i < collapseKfs.length; i++) {
+    if (collapseKfs[i].t <= t) { on = collapseKfs[i].collapse; t0 = collapseKfs[i].t; }
+  }
+  return on ? Math.min(1, (t - t0) / S.collapseDur) : 0;
+}
+
+// ===== orb (이동 광원) =====
+function pathPoint(pts, u) {
+  // Catmull-Rom (2점이면 선형). u ∈ [0,1], 세그먼트 균등 분할.
+  var n = pts.length;
+  if (n === 1) return [pts[0][0] * W, pts[0][1] * H];
+  if (n === 2) {
+    return [(pts[0][0] + (pts[1][0] - pts[0][0]) * u) * W,
+            (pts[0][1] + (pts[1][1] - pts[0][1]) * u) * H];
+  }
+  var seg = Math.min(n - 2, Math.floor(u * (n - 1)));
+  var lu = u * (n - 1) - seg;
+  var p0 = pts[Math.max(0, seg - 1)], p1 = pts[seg], p2 = pts[seg + 1], p3 = pts[Math.min(n - 1, seg + 2)];
+  function cr(a, b, cc, d, s) {
+    return 0.5 * ((2 * b) + (-a + cc) * s + (2 * a - 5 * b + 4 * cc - d) * s * s + (-a + 3 * b - 3 * cc + d) * s * s * s);
+  }
+  return [cr(p0[0], p1[0], p2[0], p3[0], lu) * W, cr(p0[1], p1[1], p2[1], p3[1], lu) * H];
+}
+function windowEnv(t, t0, t1, ramp) {
+  if (t < t0 || t > t1) return 0;
+  var r = ramp || 0.3;
+  return smoothstep(Math.min(1, (t - t0) / r)) * smoothstep(Math.min(1, (t1 - t) / r));
+}
+function pulseWave(t, p) {
+  // 맥박 파형 0~1: sharp↑ = 날카로운 두근 + 긴 휴지기. cycles 정수 강제로 duration 을 정확히
+  // 나눠 loop 이음매 없음. t=0 위상 = 휴지(0) — 루프 경계가 맥박 사이 정적 구간에 온다.
+  var cyc = Math.max(1, Math.round(p.cycles || 1));
+  var s = p.sharp != null ? p.sharp : 3;
+  return Math.pow(0.5 + 0.5 * Math.sin(TAU * cyc * t / DUR - Math.PI / 2), s);
+}
+// 프레임마다 갱신되는 활성 상태 (draw/update 가 참조)
+var activeOrbs = [];   // {x, y, size, rgb, env, trailPts, boost}
+var activePulses = []; // {def, env}
+
+function computeActors(t) {
+  activeOrbs.length = 0;
+  for (var i = 0; i < S.orbs.length; i++) {
+    var o = S.orbs[i];
+    var env, u;
+    if (!o.t) {
+      // t 생략 = 상시 점등, 경로 시작점 고정 — loop 단독 광원 에셋용 (페이드 없음 → 이음매 없음)
+      env = 1; u = 0;
+    } else {
+      var t0 = o.t[0], t1 = o.t[1];
+      if (o.hold) {
+        // hold: t1 = 도착 시각 — 페이드아웃 없이 경로 끝점에 영상 끝까지 머문다 (once 전용 권장)
+        env = t < t0 ? 0 : smoothstep(Math.min(1, (t - t0) / (o.ramp || 0.3)));
+      } else {
+        env = windowEnv(t, t0, t1, o.ramp);
+      }
+      if (env <= 0.001) continue;
+      u = clamp01((t - t0) / Math.max(1e-6, t1 - t0));
+    }
+    var sizeMul = 1;
+    if (o.pulse) {
+      // 맥박: 밝기 + 글로우 반경이 함께 두근거린다 (amp = 밝기 상승폭, swell = 반경 팽창비)
+      var pw = pulseWave(t, o.pulse);
+      env *= 1 + (o.pulse.amp != null ? o.pulse.amp : 0.3) * pw;
+      sizeMul = 1 + (o.pulse.swell != null ? o.pulse.swell : 0.25) * pw;
+    }
+    if (o.ease !== 'linear') u = smoothstep(u);
+    var pos = pathPoint(o.path, u);
+    var trailPts = [];
+    var trailAmt = o.trail === undefined ? 0.4 : o.trail;
+    if (o.hold && t > t1) trailAmt *= Math.max(0, 1 - (t - t1) / 0.8); // 도착 후 꼬리 수습
+    if (trailAmt > 0) {
+      for (var k = 1; k <= 10; k++) {
+        var uu = u - k * trailAmt * 0.035;
+        if (uu < 0) break;
+        trailPts.push(pathPoint(o.path, uu));
+      }
+    }
+    activeOrbs.push({
+      x: pos[0], y: pos[1],
+      size: (o.size || 80) * sizeMul,
+      rgb: hexToRgb(o.color || '#8ab4ff'),
+      env: env, trailPts: trailPts,
+      boost: o.boost || null
+    });
+  }
+  activePulses.length = 0;
+  for (var j = 0; j < S.pulses.length; j++) {
+    var p = S.pulses[j];
+    var pe = windowEnv(t, p.t[0], p.t[1], p.ramp);
+    if (pe > 0.001) activePulses.push({ def: p, env: pe });
+  }
+}
+// ===== dots (개수 정확 점 등장 — 시차 페이드인 · 떠오름 · once 전용 권장) =====
+// 별도 PRNG 사용: 별(stars) rng 스트림을 건드리지 않아 기존 spec 픽셀 불변
+var dotActors = [];
+(function initDots() {
+  var drng = mulberry32((S.seed ^ 0x5bf03635) >>> 0);
+  for (var i = 0; i < S.dots.length; i++) {
+    var d = S.dots[i];
+    var pts = [];
+    if (d.points) for (var k = 0; k < d.points.length; k++) pts.push([d.points[k][0] * W, d.points[k][1] * H]);
+    var count = d.count || pts.length || 1;
+    while (pts.length < count) {
+      var z = d.zone;
+      if (z && z.type === 'circle') {
+        var ang = drng() * TAU, rr = Math.sqrt(drng()) * z.r * Math.min(W, H);
+        pts.push([z.x * W + Math.cos(ang) * rr, z.y * H + Math.sin(ang) * rr]);
+      } else if (z && z.type === 'rect') {
+        pts.push([(z.x0 + (z.x1 - z.x0) * drng()) * W, (z.y0 + (z.y1 - z.y0) * drng()) * H]);
+      } else {
+        pts.push([drng() * W, drng() * H]);
+      }
+    }
+    var minX = Infinity, maxX = -Infinity;
+    for (var b = 0; b < pts.length; b++) { minX = Math.min(minX, pts[b][0]); maxX = Math.max(maxX, pts[b][0]); }
+    var t0 = d.t ? d.t[0] : 0, t1 = d.t ? d.t[1] : DUR;
+    var fade = d.fade || 0.5;
+    var span = Math.max(0, (t1 - t0) - fade);
+    for (var m = 0; m < pts.length; m++) {
+      var order = d.stagger === 'ltr' ? (pts[m][0] - minX) / Math.max(1, maxX - minX) : drng();
+      dotActors.push({
+        x: pts[m][0], y: pts[m][1],
+        appear: t0 + order * span, fade: fade,
+        size: d.size || 3, rgb: hexToRgb(d.color || '#ffffff'),
+        glow: d.glow || 0, rise: d.rise || 0,
+        twinkle: d.twinkle || 0, ph: drng() * TAU, omega: dotOmega(0.8 + drng() * 1.2),
+        pulse: d.pulse || null
+      });
+    }
+  }
+})();
+function dotOmega(spd) {
+  // 트윙클 각속도. loop 모드에선 2π/DUR 배수로 양자화 — 마지막→첫 프레임 이음매 제거 (별 트윙클과 동일 원리)
+  if (!LOOP) return spd * 2;
+  var w0 = TAU / DUR;
+  return Math.max(1, Math.round((spd * 2) / w0)) * w0;
+}
+function drawDots(t) {
+  for (var i = 0; i < dotActors.length; i++) {
+    var d = dotActors[i];
+    // loop 모드: 등장 연출(시차 페이드인·떠오름)은 이음매를 만들므로 생략 — 상시 점등
+    var e = LOOP ? 1 : smoothstep(clamp01((t - d.appear) / d.fade));
+    if (e <= 0.002) continue;
+    var a = e;
+    if (d.twinkle > 0) a *= (1 - d.twinkle * 0.3) + d.twinkle * 0.3 * Math.sin(d.ph + t * d.omega);
+    var sz = d.size;
+    if (d.pulse) {
+      // 맥박: 밝기 + 크기(코어·글로우) 동시 팽창
+      var pw = pulseWave(t, d.pulse);
+      a *= 1 + (d.pulse.amp != null ? d.pulse.amp : 0.3) * pw;
+      sz *= 1 + (d.pulse.swell != null ? d.pulse.swell : 0.25) * pw;
+    }
+    var y = d.y + (1 - e) * d.rise; // 떠오름: rise px 아래에서 올라와 정착
+    if (d.glow > 0) drawGlow(d.x, y, sz * 6, d.rgb, Math.min(1, a * 0.5 * d.glow));
+    c.fillStyle = 'rgba(' + d.rgb[0] + ',' + d.rgb[1] + ',' + d.rgb[2] + ',' + Math.min(1, a) + ')';
+    c.beginPath();
+    c.arc(d.x, y, sz, 0, TAU);
+    c.fill();
+  }
+}
+
+function zoneFactor(zone, x, y) {
+  if (!zone || zone === 'all' || zone.type === 'all') return 1;
+  if (zone.type === 'circle') {
+    var r = zone.r * Math.min(W, H);
+    var d = Math.hypot(x - zone.x * W, y - zone.y * H);
+    return smoothstep((r - d) / Math.max(1, r * 0.35));
+  }
+  if (zone.type === 'rect') {
+    var fx = Math.min(x - zone.x0 * W, zone.x1 * W - x);
+    var fy = Math.min(y - zone.y0 * H, zone.y1 * H - y);
+    var feather = Math.min(W, H) * 0.05;
+    return smoothstep(Math.min(fx, fy) / feather);
+  }
+  return 0;
+}
+
+// ===== 별 =====
+function Node(x, y, id) {
+  this.x = x; this.y = y;
+  this.prevX = x; this.prevY = y;
+  this.baseX = x; this.baseY = y;
+  this.id = id;
+  var bright = rng() < S.stars.brightRatio;
+  this.bright = bright;
+  this.size = bright ? rng() * 1.3 + 1.8 : rng() * 1.1 + 0.7;
+  this.baseAlpha = bright ? rng() * 0.3 + 0.7 : rng() * 0.35 + 0.4;
+  this.twPhase = rng() * TAU;
+  this.twSpeed = rng() * 0.6 + 0.3;
+  this.sparkle = rng() < S.stars.sparkleRatio;
+  this.spPhase = rng() * TAU;
+  this.spSpeed = rng() * 0.4 + 0.25;
+  if (this.sparkle) {
+    this.bright = true;
+    this.size = rng() * 1.0 + 2.0;
+    this.baseAlpha = rng() * 0.2 + 0.75;
+  }
+  this.size *= S.stars.sizeScale;
+  // palette 미지정 시 rng 를 소비하지 않는다 — 기존 spec 의 별 배치·거동이 바뀌지 않게
+  this.rgb = (S.stars.palette && S.stars.palette.length)
+    ? hexToRgb(S.stars.palette[Math.floor(rng() * S.stars.palette.length)])
+    : null;
+  this.density = rng() * 8 + 1;
+  this.vx = rng() * 0.4 - 0.2;
+  this.vy = rng() * 0.4 - 0.2;
+  this.ambientVx = rng() * 0.3 - 0.15;
+  this.ambientVy = rng() * 0.3 - 0.15;
+  this.maxSpeed = 2.5 + rng() * 1.5;
+  this.target = null;
+  this.alignDelay = rng() * 0.75;
+  this.alignA = 0;
+  this.collapseDelay = rng();
+  this.collapseStar = 0;
+  // 루프 모드: 해석적 드리프트 (리사주) — t=0 과 t=DUR 에서 동일 위치 보장
+  var ampScale = Math.min(W, H) / 1080;
+  this.a1x = (rng() * 14 + 8) * ampScale; this.f1x = (rng() < 0.35 ? 2 : 1); this.p1x = rng() * TAU;
+  this.a1y = (rng() * 14 + 8) * ampScale; this.f1y = (rng() < 0.35 ? 2 : 1); this.p1y = rng() * TAU;
+  this.a2x = (rng() * 5 + 3) * ampScale;  this.f2x = (rng() < 0.5 ? 3 : 2);  this.p2x = rng() * TAU;
+  this.a2y = (rng() * 5 + 3) * ampScale;  this.f2y = (rng() < 0.5 ? 3 : 2);  this.p2y = rng() * TAU;
+  if (LOOP) {
+    this.twSpeed = qFreq(this.twSpeed);
+    this.spSpeed = qFreq(this.spSpeed);
+  }
+}
+
+Node.prototype.draw = function (t) {
+  // 정렬(alignA↑)될수록 트윙클 진폭을 줄이고 밝기 하한을 올림 — 심볼/글자 윤곽이 또렷해진다
+  var twAmp = 0.3 * (1 - this.alignA * 0.75);
+  var tw = (1 - twAmp) + twAmp * Math.sin(this.twPhase + t * this.twSpeed);
+  var a = Math.min(1, this.baseAlpha * tw + this.alignA * 0.2);
+  var flash = 0;
+  if (this.sparkle) {
+    flash = Math.pow(0.5 + 0.5 * Math.sin(this.spPhase + t * this.spSpeed), 3);
+    a = Math.min(1, a + flash * 0.35);
+  }
+  // pulses: 시간창 × 공간 존 반짝임/증광/감광
+  for (var pi = 0; pi < activePulses.length; pi++) {
+    var ap = activePulses[pi];
+    var def = ap.def;
+    var z = zoneFactor(def.zone, this.x, this.y);
+    if (z <= 0.001) continue;
+    var ratio = def.ratio === undefined ? 1 : def.ratio;
+    if (ratio < 1 && hash01(this.id, 7.7) > ratio) continue;
+    var str = (def.strength === undefined ? 1 : def.strength) * ap.env * z;
+    var effect = def.effect || 'sparkle';
+    if (effect === 'sparkle') {
+      var spd = 4 + hash01(this.id, 3.3) * 4;
+      if (LOOP) spd = qFreq(spd);
+      var fl = Math.pow(0.5 + 0.5 * Math.sin(hash01(this.id, 1.1) * TAU + t * spd), 3) * str;
+      flash = Math.min(1, flash + fl);
+      a = Math.min(1, a + fl * 0.5);
+    } else if (effect === 'brighten') {
+      a = Math.min(1, a + str * 0.6);
+    } else if (effect === 'dim') {
+      a *= 1 - Math.min(0.95, str);
+    }
+  }
+  // orb 광원 근접 증광
+  for (var oi = 0; oi < activeOrbs.length; oi++) {
+    var ob = activeOrbs[oi];
+    if (!ob.boost || !ob.boost.brighten) continue;
+    var rad = ob.boost.radius || 150;
+    var d = Math.hypot(this.x - ob.x, this.y - ob.y);
+    if (d < rad) {
+      var fall = 1 - d / rad;
+      a = Math.min(1, a + ob.boost.brighten * fall * fall * ob.env);
+    }
+  }
+  if (this.collapseStar > 0) a *= 1 - this.collapseStar * 0.85;
+  var r = 255, g = 255, b = 255;
+  if (this.rgb) { r = this.rgb[0]; g = this.rgb[1]; b = this.rgb[2]; }
+  if (this.target && this.alignA > 0 && this.tintRgb) {
+    var tint = this.tintRgb;
+    var m = this.alignA * 0.85;
+    r = Math.round(r + (tint[0] - r) * m);
+    g = Math.round(g + (tint[1] - g) * m);
+    b = Math.round(b + (tint[2] - b) * m);
+  }
+  if (this.collapseStar > 0.03) {
+    var dxs = this.x - this.prevX;
+    var dys = this.y - this.prevY;
+    var spd2 = Math.hypot(dxs, dys);
+    if (spd2 > 0.5) {
+      var K = 3.2;
+      var sa = Math.min(0.85, 0.12 + spd2 * 0.06);
+      c.strokeStyle = 'rgba(255,255,255,' + sa + ')';
+      c.lineWidth = Math.max(0.7, this.size * 0.85);
+      c.lineCap = 'round';
+      c.beginPath();
+      c.moveTo(this.x - dxs * K, this.y - dys * K);
+      c.lineTo(this.x, this.y);
+      c.stroke();
+    }
+  }
+  // 정렬될수록 글린트·글로우를 죽이고 점 크기를 균일화 — 작은 글자도 활자처럼 또렷하게
+  flash *= 1 - this.alignA * 0.85;
+  var drawSize = this.size;
+  if (this.alignA > 0) {
+    var uni = Math.min(W, H) / 360; // 해상도 비례 균일 점 크기 (1080 기준 3px)
+    drawSize = this.size + (uni - this.size) * this.alignA * 0.85;
+  }
+  if (S.stars.glow > 0) {
+    drawGlow(this.x, this.y, drawSize * 5, [r, g, b], a * 0.45 * S.stars.glow * (1 - this.alignA * 0.85));
+  }
+  if ((this.sparkle || flash > 0.03) && this.alignA < 0.5) {
+    c.shadowBlur = this.size * (3 + flash * 3);
+    c.shadowColor = 'rgba(' + r + ',' + g + ',' + b + ',' + (a * 0.7) + ')';
+  }
+  c.fillStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + a + ')';
+  c.beginPath();
+  c.arc(this.x, this.y, drawSize, 0, TAU);
+  c.fill();
+  c.shadowBlur = 0;
+  if (flash > 0.03) {
+    var len = this.size * (2 + flash * 4);
+    c.strokeStyle = 'rgba(' + r + ',' + g + ',' + b + ',' + (flash * 0.5) + ')';
+    c.lineWidth = 0.6;
+    c.beginPath();
+    c.moveTo(this.x - len, this.y);
+    c.lineTo(this.x + len, this.y);
+    c.moveTo(this.x, this.y - len);
+    c.lineTo(this.x, this.y + len);
+    c.stroke();
+  }
+};
+
+Node.prototype.update = function (grid, aligns, ambientAlign, collapse, t) {
+  this.prevX = this.x;
+  this.prevY = this.y;
+
+  if (LOOP) {
+    // 해석적 위치 — 적분 없음, 루프 이음매 없음
+    this.x = this.baseX
+      + this.a1x * Math.sin(TAU * this.f1x * t / DUR + this.p1x)
+      + this.a2x * Math.sin(TAU * this.f2x * t / DUR + this.p2x);
+    this.y = this.baseY
+      + this.a1y * Math.sin(TAU * this.f1y * t / DUR + this.p1y)
+      + this.a2y * Math.sin(TAU * this.f2y * t / DUR + this.p2y);
+    return;
+  }
+
+  this.baseX += this.ambientVx;
+  this.baseY += this.ambientVy;
+  if (this.baseX < -marginX || this.baseX > W + marginX) {
+    this.ambientVx *= -1;
+    this.baseX = Math.max(-marginX, Math.min(W + marginX, this.baseX));
+  }
+  if (this.baseY < -marginY || this.baseY > H + marginY) {
+    this.ambientVy *= -1;
+    this.baseY = Math.max(-marginY, Math.min(H + marginY, this.baseY));
+  }
+
+  var a = 0;
+  var anchorX = this.baseX;
+  var anchorY = this.baseY;
+  if (this.target) {
+    var ga = this.groupIdx >= 0 ? aligns[this.groupIdx] : 0;
+    a = smoothstep((ga - this.alignDelay) / 0.18);
+    anchorX = this.baseX + (this.target[0] - this.baseX) * a;
+    anchorY = this.baseY + (this.target[1] - this.baseY) * a;
+  } else {
+    var dcx = W / 2 - this.baseX;
+    var dcy = H / 2 - this.baseY;
+    var dist0 = Math.hypot(dcx, dcy);
+    var maxDist = Math.hypot(W * 0.62, H * 0.62);
+    var distFactor = Math.min(1, dist0 / maxDist);
+    var pull = ambientAlign * (0.28 + 0.5 * distFactor) * S.align.pull;
+    anchorX = this.baseX + dcx * pull;
+    anchorY = this.baseY + dcy * pull;
+  }
+  if (collapse > 0) {
+    var u = Math.min(1, Math.max(0, (collapse - this.collapseDelay * 0.65) / 0.35));
+    this.collapseStar = u * u * u;
+    anchorX += (W / 2 - anchorX) * this.collapseStar;
+    anchorY += (H / 2 - anchorY) * this.collapseStar;
+  } else {
+    this.collapseStar = 0;
+  }
+  this.alignA = a;
+
+  // orb 인력 (선택) — 광원이 지나가며 별을 살짝 끌어당김
+  for (var oi = 0; oi < activeOrbs.length; oi++) {
+    var ob = activeOrbs[oi];
+    if (!ob.boost || !ob.boost.attract) continue;
+    var rad = ob.boost.radius || 150;
+    var dx = ob.x - this.x;
+    var dy = ob.y - this.y;
+    var dist = Math.hypot(dx, dy);
+    if (dist < rad && dist > 1) {
+      var force = ob.boost.attract * (1 - dist / rad) * 0.05 * ob.env;
+      this.vx += (dx / dist) * force * this.density * 0.3;
+      this.vy += (dy / dist) * force * this.density * 0.3;
+    }
+  }
+
+  if (a < 0.6) {
+    var gx = Math.floor(this.x / CELL);
+    var gy = Math.floor(this.y / CELL);
+    for (var ox = -1; ox <= 1; ox++) {
+      for (var oy = -1; oy <= 1; oy++) {
+        var cell = grid.get(cellKey(gx + ox, gy + oy));
+        if (!cell) continue;
+        for (var ci = 0; ci < cell.length; ci++) {
+          var other = cell[ci];
+          if (other === this) continue;
+          var odx = other.x - this.x;
+          var ody = other.y - this.y;
+          var d = Math.sqrt(odx * odx + ody * ody);
+          if (d < 28 && d > 0) {
+            var f = 0.18 * (1 - d / 28) * (1 - a);
+            this.vx -= (odx / d) * f;
+            this.vy -= (ody / d) * f;
+          }
+        }
+      }
+    }
+  }
+
+  var damp = 0.95 - this.collapseStar * 0.55;
+  this.vx *= damp;
+  this.vy *= damp;
+  var spd = Math.sqrt(this.vx * this.vx + this.vy * this.vy);
+  if (spd > this.maxSpeed) {
+    this.vx = (this.vx / spd) * this.maxSpeed;
+    this.vy = (this.vy / spd) * this.maxSpeed;
+  }
+
+  this.x += this.vx;
+  this.y += this.vy;
+  var ease = 0.012 + a * 0.1 + this.collapseStar * 0.42;
+  this.x += (anchorX - this.x) * ease;
+  this.y += (anchorY - this.y) * ease;
+
+  if (this.x < -marginX || this.x > W + marginX) this.vx *= -1;
+  if (this.y < -marginY || this.y > H + marginY) this.vy *= -1;
+};
+
+// ===== 장면 상태 =====
+var nodes = [];
+var t = 0;
+var frameIdx = 0;
+
+function assignTargets() {
+  for (var i = 0; i < nodes.length; i++) {
+    nodes[i].target = null;
+    nodes[i].groupIdx = -1;
+    nodes[i].tintRgb = null;
+  }
+  if (LOOP || !GROUPS.length) return;
+  var aligningTotal = Math.min(nodes.length, Math.floor(nodes.length * S.align.ratio));
+  var measures = GROUPS.map(function (g) { return prepGroup(g).measure; });
+  var msum = 0;
+  for (var m0 = 0; m0 < measures.length; m0++) msum += measures[m0];
+  if (msum <= 0) return;
+  var pool = nodes.slice();
+  for (var gi = 0; gi < GROUPS.length; gi++) {
+    var g = GROUPS[gi];
+    var cnt = Math.min(pool.length, Math.max(2, Math.round(aligningTotal * measures[gi] / msum)), 320);
+    if (cnt < 1) continue;
+    var cx = g.at[0] * W, cy = g.at[1] * H;
+    var targets = sampleGroupTargets(g, cnt);
+    if (!targets.length) continue;
+    // 근접 편향 + 랜덤 지터로 모집 — 가까운 별 위주로 뽑되 화면 전역에서 고르게 데려와
+    // 특정 방향의 배경 별밭만 비는 것을 막는다 (별이 사방에서 날아드는 연출 효과도 겸함)
+    var JITTER = Math.max(W, H) * 0.6;
+    for (var s0 = 0; s0 < pool.length; s0++) {
+      pool[s0].recruitScore = Math.hypot(pool[s0].baseX - cx, pool[s0].baseY - cy) + rng() * JITTER;
+    }
+    pool.sort(function (m, n) { return m.recruitScore - n.recruitScore; });
+    var members = pool.splice(0, Math.min(cnt, targets.length));
+    targets.sort(function (p, q) {
+      return Math.atan2(p[1] - cy, p[0] - cx) - Math.atan2(q[1] - cy, q[0] - cx);
+    });
+    members.sort(function (m, n) {
+      return Math.atan2(m.baseY - cy, m.baseX - cx) - Math.atan2(n.baseY - cy, n.baseX - cx);
+    });
+    var tint = hexToRgb(g.tint);
+    for (var j = 0; j < members.length; j++) {
+      members[j].target = targets[j % targets.length];
+      members[j].groupIdx = gi;
+      members[j].tintRgb = tint;
+    }
+  }
+}
+
+function initScene() {
+  rng = mulberry32(S.seed >>> 0);
+  nodes = [];
+  t = 0;
+  frameIdx = 0;
+  var fieldW = W + marginX * 2;
+  var fieldH = H + marginY * 2;
+  var count = Math.min(Math.floor((fieldW * fieldH) / S.stars.density), S.stars.max);
+  for (var i = 0; i < count; i++) {
+    nodes.push(new Node(rng() * fieldW - marginX, rng() * fieldH - marginY, i));
+  }
+  assignTargets();
+  computeActors(0);
+}
+
+function buildGrid() {
+  var grid = new Map();
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i];
+    var key = cellKey(Math.floor(n.x / CELL), Math.floor(n.y / CELL));
+    var arr = grid.get(key);
+    if (arr) arr.push(n); else grid.set(key, [n]);
+  }
+  return grid;
+}
+
+var BUCKETS = 6;
+function drawConnections(grid, collapse) {
+  if (!S.connections.enabled) return;
+  var lineFade = 1 - collapse;
+  if (lineFade <= 0.01) return;
+  var paths = [];
+  for (var b = 0; b < BUCKETS; b++) paths.push(new Path2D());
+  for (var i = 0; i < nodes.length; i++) {
+    var n = nodes[i];
+    var gx = Math.floor(n.x / CELL);
+    var gy = Math.floor(n.y / CELL);
+    for (var ox = -1; ox <= 1; ox++) {
+      for (var oy = -1; oy <= 1; oy++) {
+        var cell = grid.get(cellKey(gx + ox, gy + oy));
+        if (!cell) continue;
+        for (var ci = 0; ci < cell.length; ci++) {
+          var m = cell[ci];
+          if (m.id <= n.id) continue;
+          var dx = n.x - m.x;
+          var dy = n.y - m.y;
+          var d2 = dx * dx + dy * dy;
+          // 정렬된 별은 연결 반경을 좁힘 — 글자 속공간을 가로지르는 선을 막고 획만 따라 잇는다
+          var allow = CONN_DIST * (1 - 0.65 * Math.max(n.alignA, m.alignA));
+          if (d2 < allow * allow) {
+            var closeness = 1 - Math.sqrt(d2) / CONN_DIST;
+            var bb = (closeness * BUCKETS) | 0;
+            if (bb >= BUCKETS) bb = BUCKETS - 1;
+            paths[bb].moveTo(n.x, n.y);
+            paths[bb].lineTo(m.x, m.y);
+          }
+        }
+      }
+    }
+  }
+  c.lineWidth = 0.7;
+  for (var b2 = 0; b2 < BUCKETS; b2++) {
+    var op = ((b2 + 0.5) / BUCKETS) * S.connections.opacity * lineFade;
+    c.strokeStyle = 'rgba(255,255,255,' + op + ')';
+    c.stroke(paths[b2]);
+  }
+}
+
+function drawOrbs() {
+  if (!activeOrbs.length) return;
+  c.save();
+  c.globalCompositeOperation = 'lighter';
+  for (var i = 0; i < activeOrbs.length; i++) {
+    var o = activeOrbs[i];
+    // 트레일 (경로 뒤쪽으로 감쇠)
+    for (var k = 0; k < o.trailPts.length; k++) {
+      var decay = Math.pow(1 - (k + 1) / (o.trailPts.length + 1), 2);
+      drawGlow(o.trailPts[k][0], o.trailPts[k][1], o.size * (0.7 - 0.03 * k), o.rgb, o.env * decay * 0.35);
+    }
+    // 본체
+    drawGlow(o.x, o.y, o.size, o.rgb, o.env * 0.9);
+    // 코어
+    c.fillStyle = 'rgba(255,255,255,' + (o.env * 0.9) + ')';
+    c.beginPath();
+    c.arc(o.x, o.y, Math.max(1.5, o.size * 0.06), 0, TAU);
+    c.fill();
+  }
+  c.restore();
+}
+function drawGlow(x, y, r, rgb, alpha) {
+  if (alpha <= 0.002 || r <= 0) return;
+  var g = c.createRadialGradient(x, y, 0, x, y, r);
+  g.addColorStop(0, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + alpha + ')');
+  g.addColorStop(0.35, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + (alpha * 0.35) + ')');
+  g.addColorStop(1, 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0)');
+  c.fillStyle = g;
+  c.beginPath();
+  c.arc(x, y, r, 0, TAU);
+  c.fill();
+}
+
+function stepOnce() {
+  // 서브스텝 1회: t 전진 + 물리 갱신
+  t += DT;
+  computeActors(t);
+  var aligns = groupAlignsAt(t);
+  var ambientAlign = 0;
+  for (var a2 = 0; a2 < aligns.length; a2++) if (aligns[a2] > ambientAlign) ambientAlign = aligns[a2];
+  var collapse = collapseAt(t);
+  var grid = LOOP ? null : buildGrid();
+  for (var i = 0; i < nodes.length; i++) {
+    nodes[i].update(grid, aligns, ambientAlign, collapse, t);
+  }
+}
+function stepFrame() {
+  for (var s = 0; s < SUB; s++) stepOnce();
+  frameIdx++;
+}
+
+function draw() {
+  if (S.bg === 'transparent') {
+    c.clearRect(0, 0, W, H); // 알파 보존 — PNG 프레임에 투명 배경이 실린다
+  } else {
+    c.fillStyle = S.bg;
+    c.fillRect(0, 0, W, H);
+  }
+  var collapse = collapseAt(t);
+  drawConnections(buildGrid(), collapse);
+  drawOrbs();
+  for (var i = 0; i < nodes.length; i++) nodes[i].draw(t);
+  drawDots(t);
+  applyMask();
+}
+
+function applyMask() {
+  // mask: { type:'circle', x, y (0~1, 기본 중앙), r (min(W,H) 대비 반지름 비, 기본 0.5), feather (px, 기본 2) }
+  // 원 밖 알파 제거. bg 를 색으로 구운 원형 GIF 에셋용 — GIF 알파는 1bit 라 투명 배경에선 글로우
+  // falloff 가 임계값에서 잘리지만, 어두운 bg 를 원 안에 함께 구우면 글로우가 8bit 그라데이션으로 보존된다.
+  if (!S.mask || S.mask.type !== 'circle') return;
+  var mr = (S.mask.r != null ? S.mask.r : 0.5) * Math.min(W, H);
+  var mf = S.mask.feather != null ? S.mask.feather : 2;
+  var mx = (S.mask.x != null ? S.mask.x : 0.5) * W;
+  var my = (S.mask.y != null ? S.mask.y : 0.5) * H;
+  c.save();
+  c.globalCompositeOperation = 'destination-in';
+  var g = c.createRadialGradient(mx, my, Math.max(0, mr - mf), mx, my, mr);
+  g.addColorStop(0, 'rgba(0,0,0,1)');
+  g.addColorStop(1, 'rgba(0,0,0,0)');
+  c.fillStyle = g;
+  c.fillRect(0, 0, W, H);
+  c.restore();
+}
+
+function seekTo(target) {
+  target = Math.max(0, Math.min(FRAMES - 1, target));
+  if (target < frameIdx) initScene();
+  while (frameIdx < target) stepFrame();
+  draw();
+}
+
+// ===== 렌더 API (render.mjs 가 호출) =====
+window.__getRenderInfo = function () {
+  return { name: S.name, frames: FRAMES, fps: FPS, width: W, height: H, loop: LOOP, duration: DUR };
+};
+window.__renderFrame = function (i) {
+  seekTo(i);
+  return canvas.toDataURL('image/png');
+};
+
+// ===== 프리뷰 (콘티 모드) =====
+initScene();
+draw();
+
+var isRender = location.hash === '#render';
+var ctl = document.getElementById('ctl');
+if (isRender) {
+  ctl.style.display = 'none';
+} else {
+  var playBtn = document.getElementById('play');
+  var scrub = document.getElementById('scrub');
+  var clock = document.getElementById('clock');
+  document.getElementById('title').textContent = S.name;
+  document.getElementById('meta').textContent = W + '×' + H + ' · ' + FPS + 'fps · ' + (LOOP ? 'loop' : 'once');
+  scrub.max = FRAMES - 1;
+
+  var warns = [];
+  if (LOOP && (GROUPS.length || collapseKfs.length)) {
+    warns.push('loop 모드 — timeline 의 progress/collapse 는 무시됩니다 (once 로 바꾸세요)');
+  }
+  if (warns.length) {
+    var wEl = document.getElementById('warn');
+    wEl.textContent = warns.join(' · ');
+    wEl.hidden = false;
+  }
+
+  var playing = true;
+  var lastTs = null;
+  var acc = 0;
+  var scrubbing = false;
+
+  function updateUI() {
+    scrub.value = frameIdx;
+    clock.textContent = (frameIdx / FPS).toFixed(2) + 's / ' + DUR.toFixed(1) + 's · f' + frameIdx;
+  }
+  function tick(ts) {
+    if (playing && !scrubbing) {
+      if (lastTs !== null) {
+        acc += Math.min(0.25, (ts - lastTs) / 1000);
+        var stepped = false;
+        while (acc >= 1 / FPS) {
+          acc -= 1 / FPS;
+          if (frameIdx >= FRAMES - 1) {
+            if (LOOP) { initScene(); } else { playing = false; playBtn.textContent = '▶ 재생'; break; }
+          } else {
+            stepFrame();
+          }
+          stepped = true;
+        }
+        if (stepped) { draw(); updateUI(); }
+      }
+      lastTs = ts;
+    } else {
+      lastTs = ts;
+    }
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+  updateUI();
+
+  playBtn.addEventListener('click', function () {
+    playing = !playing;
+    if (playing && frameIdx >= FRAMES - 1) initScene();
+    playBtn.textContent = playing ? '⏸ 정지' : '▶ 재생';
+  });
+  scrub.addEventListener('pointerdown', function () { scrubbing = true; });
+  scrub.addEventListener('pointerup', function () { scrubbing = false; });
+  scrub.addEventListener('input', function (e) {
+    seekTo(parseInt(e.target.value, 10) || 0);
+    updateUI();
+  });
+  window.addEventListener('keydown', function (e) {
+    if (e.code === 'Space') {
+      e.preventDefault();
+      playBtn.click();
+    }
+  });
+}
+})();
+</script>
+</body>
+</html>
