@@ -44,7 +44,8 @@ Bash로 직접 실행하는 요청을 막지 못하므로, 이 플러그인은 `
 함께 설치합니다.
 
 - **유료 호출** — `generate create`·`generate workflow`·`soul-id create`·`marketing-studio dtc-ads generate`·
-  `product-photoshoot`·`marketplace-cards`. 유효한 승인 토큰이 없으면 **차단**(exit 2)되고, 차단 사유가 에이전트에게 전달됩니다.
+  `marketing-studio ad-references create`·`product-photoshoot`·`marketplace-cards`. 유효한 승인 토큰이 없으면
+  **차단**(exit 2)되고, 차단 사유가 에이전트에게 전달됩니다.
 - **무료 호출** — `generate cost`·`list`·`get`·`wait`·`model`·`workflow`·`account status`·`auth`·`upload create`·
   `soul-id list|get|wait`·`marketing-studio ... list|get|fetch`·`--help`·`--cost-only`. 토큰 로직을 타기 **전에**
   통과 판정하므로, 토큰이 깨져 있어도 무료 호출은 막히지 않습니다.
@@ -75,6 +76,35 @@ Bash로 직접 실행하는 요청을 막지 못하므로, 이 플러그인은 `
 
 ```gitignore
 .claude/.higgsfield-gate-approval.json
+```
+
+### 이 훅이 막지 못하는 것 (한계)
+
+**이 훅은 실수로 인한 지출을 막는 가드레일이지, 보안 경계가 아닙니다.** 아래는 알려진 한계이며, 감추지 않고 적습니다.
+
+- **문자열만 봅니다.** 훅에 전달되는 것은 Bash 명령 문자열뿐입니다. 따라서 **의도적 우회는 통과합니다** —
+  `HF=higgsfield; $HF generate create ...`(변수 간접), base64 디코드 실행, 래퍼 스크립트 경유 등.
+  "산문 규칙이라 무시될 수 있음" → "우회하려면 작정해야 함" 수준으로 문턱을 올릴 뿐입니다.
+- **승인 토큰은 에이전트가 쓸 수 있습니다.** 토큰은 `.claude/` 아래 평범한 파일이고, 에이전트가 사용자에게 묻는 대신
+  스스로 써버리는 것을 **기계적으로 막는 장치는 없습니다.** 4개 스킬 모두 "직접 쓰지 말 것"을 명시하지만 그것은 다시
+  산문입니다. 이 구멍을 실제로 닫으려면 토큰을 에이전트 통제 밖(사용자·외부 프로세스)에서 발급해야 합니다.
+- **`node`가 PATH에 없으면 열립니다.** 훅 실행이 실패하면 종료코드가 2가 아니므로 Claude Code는 이를
+  **비차단 오류**로 처리하고 명령을 그대로 실행합니다. Claude Code 자체가 Node를 동반하므로 현실성은 낮지만,
+  남아 있는 유일한 fail-open 경로입니다. 다중 방어가 필요하면 **사용자 본인의** settings에 permission 규칙을
+  추가하는 방법이 있습니다 (선택 사항 — 이 플러그인은 사용자 설정 파일을 건드리지 않습니다):
+  ```json
+  { "permissions": { "deny": ["Bash(higgsfield generate create:*)"] } }
+  ```
+- **회차는 실행 *전*에 차감됩니다.** 훅은 PreToolUse 시점에 `runs_used`를 올리므로, 제출이 실패한 생성도
+  `runs_allowed` 한 회를 소모합니다. 안전한 방향의 오차이지만 오타 한 번으로 승인 회차를 잃을 수 있습니다.
+
+### 회귀 테스트
+
+`hooks/gate-test.sh`가 유료/무료 × 토큰 상태(없음·유효·소진·만료·손상) 조합을 훅에 직접 먹여 검증합니다.
+**`higgsfield-gate.js`를 수정하면 반드시 함께 돌리고, 명령을 추가하면 같은 커밋에 케이스를 추가하세요.**
+
+```bash
+bash plugins/higgsfield/hooks/gate-test.sh   # 실패가 하나라도 있으면 비정상 종료
 ```
 
 ## 설치
@@ -157,6 +187,7 @@ plugins/higgsfield/
   hooks/
     hooks.json                       # PreToolUse(Bash) 등록
     higgsfield-gate.js               # 유료 호출 차단 · 승인 토큰 검증·소모
+    gate-test.sh                     # 게이트 회귀 테스트 (훅 수정 시 필수 실행)
   skills/
     higgsfield-conti/SKILL.md
     higgsfield-estimate/SKILL.md

@@ -119,6 +119,12 @@ const PAID_PREFIXES = [
   ['generate', 'workflow'],      // `generate workflow cost` already matched FREE above
   ['soul-id', 'create'],
   ['marketing-studio', 'dtc-ads', 'generate'],
+  // `ad-references create` kicks off async backend processing and is not
+  // documented as free, so it is gated rather than assumed harmless. Listed
+  // here (not in MS_BILLING_GROUPS) on purpose: an approved estimate can still
+  // authorize it, and `ad-references list|get` stay free so the documented
+  // status-polling loop keeps working.
+  ['marketing-studio', 'ad-references', 'create'],
   ['product-photoshoot'],
   ['marketplace-cards'],
 ];
@@ -164,10 +170,13 @@ function classify(segment) {
   for (const p of PAID_PREFIXES) if (startsWith(verbs, p)) return 'paid';
 
   if (verbs[0] === 'marketing-studio') {
-    // e.g. ['marketing-studio','products','create'] -> group 'products', leaf 'create'
+    // Shape is `marketing-studio <group> <action> [positional...]`, so the action
+    // is verbs[2] — NOT the last verb. Reading the last verb misclassifies any
+    // call with a positional argument (`... ad-references get r-1` would take
+    // `r-1` as the action and fall through to a block).
     const group = verbs[1];
-    const leaf = verbs[verbs.length - 1];
-    if (verbs.length >= 2 && !MS_BILLING_GROUPS.has(group) && MS_FREE_LEAF.has(leaf)) return 'free';
+    const action = verbs.length >= 3 ? verbs[2] : verbs[1];
+    if (verbs.length >= 2 && !MS_BILLING_GROUPS.has(group) && MS_FREE_LEAF.has(action)) return 'free';
     return 'unknown';
   }
 
