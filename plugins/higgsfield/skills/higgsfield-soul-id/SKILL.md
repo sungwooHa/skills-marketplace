@@ -9,7 +9,6 @@ description: |
   Training is PAID — no training without an estimate (무견적 학습 금지); route through higgsfield-estimate first.
   NOT for: generating with an existing Soul reference (use higgsfield-generate), Marketing Studio avatars.
 argument-hint: "[character-name] [--image <path>...] [--soul-2|--soul-cinematic]"
-allowed-tools: Bash
 version: 1.0.0
 ---
 
@@ -28,7 +27,10 @@ Before running `create`, route through `higgsfield-estimate` exactly as `higgsfi
 approval keyword (default "진행"). `list`, `get`, and `wait` are free — no gate needed for those.
 
 At gate entry, read `.claude/higgsfield.local.md` from the project root if present (see `higgsfield-estimate` Step 0 for the
-key table); this skill uses `approval_keyword` and `escalation_role`.
+canonical parsing rules and key table); this skill uses `approval_keyword` and `escalation_role`.
+
+Missing file = all defaults. Do not invent values, and do not block on the config — every key this skill uses has a defined
+fallback (approve on "진행", escalate to the user).
 
 ## Step 0 — Bootstrap
 
@@ -75,7 +77,9 @@ key table); this skill uses `approval_keyword` and `escalation_role`.
    higgsfield soul-id wait <soul_id> --timeout 45m --interval 15s   # defaults: 30m / 10s
    higgsfield soul-id wait <soul_id> --quiet                        # no progress output
    ```
-   If training exceeds the timeout, re-issue `wait` — it rejoins the same job rather than retraining.
+   If training exceeds the timeout, re-issue `wait <soul_id>` — `wait` only polls an existing job by id ("Poll Soul training
+   until it finishes") and takes no training flags, so it cannot start a new training run. If the status stays unclear,
+   check `soul-id get <soul_id>` before considering a retrain — a retrain is billed.
    Repeated failures on the same input: stop and escalate to the `escalation_role` instead of retrying (each retrain is paid).
 
 6. **Inspect and hand off.**

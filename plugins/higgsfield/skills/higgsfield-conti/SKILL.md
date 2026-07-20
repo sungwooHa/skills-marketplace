@@ -6,7 +6,6 @@ description: |
   video prompt's timeline narration. Triggers — "콘티 만들어", "콘티 게이트", "스토리보드 그려줘",
   or when a video-generation request arrives without 콘티 approval (route through this skill first). No video generation before approval.
 argument-hint: "[motion-arc description] [--start <image>] [--end <image>]"
-allowed-tools: Bash
 version: 1.0.0
 ---
 
@@ -17,16 +16,13 @@ video regeneration (72cr+ per run) with one 콘티 (2~5cr).
 
 ## Step 0 — Read project config
 
-At gate entry, read `.claude/higgsfield.local.md` from the project root if it exists. Parse simple `key: value` lines
-(ignore blank lines, `#` comments, and markdown prose). Keys used by this skill:
+At gate entry, read `.claude/higgsfield.local.md` from the project root if present. The parsing rules and the full key table
+are specified once, in `higgsfield-estimate` Step 0 — follow that spec; it is not restated here.
 
-| Key | Default if missing |
-|---|---|
-| `style_source` | none — skip style-lock inheritance and ask the user for palette·mood·negatives |
-| `escalation_role` | `the user` |
-| `approval_keyword` | `진행` |
+This skill uses `style_source`, `approval_keyword`, and `escalation_role`.
 
-Missing file = all defaults. Do not invent values, and do not block on the config — only `style_source` changes behavior, and its absence has a defined fallback.
+Missing file = all defaults. Do not invent values, and do not block on the config — `style_source` and `approval_keyword`
+both change behavior, and both have defined fallbacks (ask the user for palette·mood·negatives; approve on "진행").
 
 ## Inputs (provided by the requester; if missing, ask one at a time)
 

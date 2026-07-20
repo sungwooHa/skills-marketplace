@@ -3,10 +3,11 @@ name: higgsfield-estimate
 description: |
   Mandatory estimate gate before paid Higgsfield generation. Before every generate call (including image·video·콘티),
   present model·settings·run count·expected credits·budget comparison as a table and get explicit "진행" (proceed) approval.
-  After generation, record actual spend and update the price table. Triggers — "견적", "비용 산정", "크레딧 얼마",
+  After generation, record the actual spend to the project's spend ledger; if it differs from the bundled price table,
+  proceed with the real number and file the correction as a marketplace PR (never edit the shipped table in-project).
+  Triggers — "견적", "비용 산정", "크레딧 얼마",
   or when Higgsfield generation is requested without estimate approval (route through this skill first). No generation without an estimate.
 argument-hint: "[asset-list or model + settings] [--runs <n>]"
-allowed-tools: Bash
 version: 1.0.0
 ---
 
@@ -16,19 +17,26 @@ version: 1.0.0
 #1 trust-breaking incident. This gate takes precedence over the official skill's (higgsfield-generate) "skip cost pre-estimation"
 UX rule — within this bundle, the spending discipline wins over that UX preference.
 
-## Step 0 — Read project config
+## Step 0 — Read project config (canonical spec for the whole bundle)
+
+**This section is the single source of truth for `.claude/higgsfield.local.md` parsing.** `higgsfield-conti` and
+`higgsfield-soul-id` reference it rather than restating it; keep the spec here only.
 
 At gate entry, read `.claude/higgsfield.local.md` from the project root if it exists. Parse simple `key: value` lines
-(ignore blank lines, `#` comments, and markdown prose). Keys used by this skill:
+(ignore blank lines, `#` comments, and markdown prose).
 
-| Key | Default if missing |
-|---|---|
-| `event_name` | none — omit project attribution from the estimate table |
-| `budget_cap_credits` | none — **ask the user for the budget cap** before presenting the estimate |
-| `regen_cap_per_piece` | `3` |
-| `spend_ledger_path` | none — **warn** that spend will not be recorded, then skip the recording step |
-| `escalation_role` | `the user` |
-| `approval_keyword` | `진행` |
+| Key | Used by | Default if missing |
+|---|---|---|
+| `event_name` | estimate | none — omit project attribution from the estimate table |
+| `budget_cap_credits` | estimate | none — **ask the user for the budget cap** before presenting the estimate. Never assume a cap |
+| `regen_cap_per_piece` | estimate | `3` |
+| `spend_ledger_path` | estimate | none — **warn** that spend will not be recorded, then skip the recording step |
+| `style_source` | conti | none — skip style-lock inheritance and ask the user for palette·mood·negatives |
+| `escalation_role` | all | `the user` |
+| `approval_keyword` | all | `진행` |
+
+Missing file = all defaults. Do not invent values, and do not block on the config — every key has a defined fallback, and the
+one money-critical key (`budget_cap_credits`) falls back to **asking the user**, never to an assumed number.
 
 ## Procedure
 

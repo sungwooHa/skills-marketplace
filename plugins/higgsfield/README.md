@@ -4,7 +4,7 @@
 [![version](https://img.shields.io/badge/version-1.0.0-informational)](./.claude-plugin/plugin.json)
 [![skills](https://img.shields.io/badge/skills-4%20bundled-4C9A2A)](#수록-스킬-4종-함께-설치)
 [![gates](https://img.shields.io/badge/gates-conti%20%E2%86%92%20estimate%20%E2%86%92%20generate-ff6b35)](#게이트-체인)
-[![license](https://img.shields.io/badge/license-MIT-blue)](../../LICENSE)
+[![license](https://img.shields.io/badge/license-MIT%20(generate%20%EC%A0%9C%EC%99%B8)-blue)](./NOTICE)
 
 Higgsfield AI로 영상·이미지·3D·오디오를 생성하는 **4스킬 번들**. 돈이 나가는 지점마다 승인 게이트를 세워
 "조용한 크레딧 소진"을 막는 것이 이 번들의 존재 이유입니다.
@@ -33,6 +33,9 @@ higgsfield-soul-id  →  (estimate 게이트 경유)  →  <soul_ref_id>  →  g
 - **무견적 생성 금지** — 콘티 이미지를 포함한 모든 유료 호출은 estimate 승인 후에만 실행.
 - **무견적 학습 금지** — `soul-id create`도 유료이므로 estimate 게이트를 통과해야 함.
 - estimate 게이트는 generate의 "비용 사전 산정 생략" UX 규칙보다 **우선**합니다 (번들 차원의 지출 규율).
+  이 우선순위는 문서상 선언이 아니라 `higgsfield-generate/SKILL.md`에 직접 패치되어 있습니다 — 해당 UX 규칙을
+  대체하고, 파일 상단에 게이트 체인 절을 두어 generate 단독 발동 시에도 게이트로 라우팅됩니다.
+- 무료 호출(`generate cost`·`list`·`get`·`model list` 등)은 게이트 면제.
 
 ## 설치
 
@@ -88,12 +91,26 @@ CLI 조회 실패 시에만 [`skills/higgsfield-estimate/references/price-table.
 2. 정정은 **마켓플레이스 레포에 PR**로 반영 (새 값 · 측정 설정 · 측정일 명시).
 3. **프로젝트 안에서 이 파일을 고치지 마세요** — 플러그인 업데이트 때 덮어써지고, 다른 프로젝트에 정정이 전파되지 않습니다.
 
+## 출처·라이선스 (higgsfield-generate)
+
+**`higgsfield-generate`는 이 레포가 작성한 스킬이 아닙니다.** Higgsfield가 배포한 `.skill` 번들
+(스킬명 `higgsfield-generate`, 업스트림 `version: 0.12.0`)에서 가져온 제3자 콘텐츠입니다.
+
+- **업스트림 라이선스: 미상.** 배포 번들에 라이선스 파일·허락 문구가 없었습니다. 이 레포는 해당 파일에 대해
+  어떤 라이선스도 주장하지 않으며, 재배포 권한을 보유한다고 주장하지 않습니다. **재배포 권한은 미해결 상태입니다.**
+- **수정됨.** 이 번들의 게이트 체인(conti G1 → estimate G3 → generate)을 강제하도록 패치했고,
+  업스트림의 "비용 사전 산정 생략" UX 규칙을 대체했습니다. 원본과 바이트 동일하지 않으며 `version: 0.12.0+gated`로 표기합니다.
+- 루트 MIT 라이선스는 이 파일에 **적용되지 않습니다**. 나머지 3개 스킬(conti·estimate·soul-id)은 이 레포 저작물로 MIT입니다.
+- 상세: [`NOTICE`](./NOTICE). "Higgsfield" 명칭·상표는 권리자 소유이며, 여기서의 사용은 CLI·서비스를 지칭하는
+  기술적 표현으로 제휴·보증을 의미하지 않습니다.
+
 ## 구성
 
 ```
 plugins/higgsfield/
   .claude-plugin/plugin.json
   README.md
+  NOTICE                             # 제3자 콘텐츠 출처 고지 (higgsfield-generate)
   higgsfield.local.md.example
   skills/
     higgsfield-conti/SKILL.md

@@ -1,5 +1,5 @@
 ---
-version: 0.12.0
+version: 0.12.0+gated
 name: higgsfield-generate
 description: |
   Generate images/videos/3D assets/audio via Higgsfield AI. Defaults:
@@ -18,6 +18,11 @@ description: |
   (`draw_to_video`, `reframe`), Marketing Studio, and
   Virality Predictor (`brain_activity`).
   Chain with higgsfield-soul-id for face/identity consistency.
+  GATED: this skill spends credits. Every credit-spending call
+  requires the higgsfield-estimate gate (G3) to pass first
+  (무견적 생성 금지). Video work goes higgsfield-conti (G1) →
+  higgsfield-estimate (G3) → this skill. Read-only calls
+  (`generate cost`, `list`, `get`) are exempt.
   NOT for: Soul Character training (use higgsfield-soul-id),
   product photoshoots, marketplace listing cards,
   text/chat/TTS tasks.
@@ -28,6 +33,22 @@ allowed-tools: Bash
 # Higgsfield Generate
 
 Submit jobs to any Higgsfield model. Wraps the `higgsfield` CLI. Covers generic image/video/3D/audio generation, Marketing Studio (branded ads, avatars, products, hooks, settings), and, secondarily, Virality Predictor video scoring.
+
+> **Modified from upstream.** This file derives from the Higgsfield-distributed skill bundle `higgsfield-generate` v0.12.0 and is **not** byte-identical to it. The divergence is the gate chain below (and the UX rule it replaces); everything else is upstream content. Version is stamped `0.12.0+gated` to make that explicit. Upstream license is unspecified — see the plugin `NOTICE`.
+
+## Gate chain — required before spending
+
+**This skill spends credits. It is the last step of a chain, never the first.**
+
+1. **Video work → `higgsfield-conti` (G1) first.** A 6-panel 콘티 must be generated and approved before any video generation. 무콘티 생성 금지.
+2. **All paid work → `higgsfield-estimate` (G3) next.** Present model·settings·run count·expected credits and get the explicit approval keyword (default "진행") before executing. **무견적 생성 금지 — no exceptions, including automatic mode.**
+3. **Then, and only then, execute here.**
+
+The gate applies to every credit-spending call in this file — `higgsfield generate create`, `higgsfield generate workflow`, `marketing-studio` generation (including `dtc-ads generate`), `product-photoshoot`, `marketplace-cards`, and anything else that bills.
+
+**Exempt (free, run freely):** `higgsfield generate cost`, `generate list`, `generate get`, `model list`, `model get`, `workflow list`, `workflow get`, `account status`, and the `marketing-studio ... list` discovery commands.
+
+If a generation request arrives without the gates passed, route to `higgsfield-conti` (video) or `higgsfield-estimate` (everything else) first — do not generate.
 
 ## Step 0 — Bootstrap
 
@@ -46,7 +67,7 @@ Before any other command:
 2. No internal jargon. Don't narrate "calling higgsfield cost", "polling job".
 3. Detect the user's language from the first message and reply in it. Technical args (`--aspect_ratio 16:9`) stay English.
 4. Don't batch-ask. Pick a sane default model and ask one thing at a time only if genuinely missing.
-5. Don't pre-estimate cost or optimize for cheaper models unless the user asks. Prefer the quality default first.
+5. **Always pre-estimate cost.** Paid operations run only after the `higgsfield-estimate` gate approves (see "Gate chain" above) — this bundle's spending discipline overrides the upstream "skip cost pre-estimation" preference. Within the approved budget, still prefer the quality default; don't silently downgrade to a cheaper model to save credits unless the user asks.
 6. Pass `--wait` to `generate create` so the command blocks until done and prints the result URL itself. Avoid the two-step `create` → `wait` pattern.
 
 ## Discovery guardrail

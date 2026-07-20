@@ -4,14 +4,19 @@
 
 ## 1. 폴더 만들기
 
+표준 레이아웃은 `plugins/<plugin-name>/skills/<skill-name>/SKILL.md` 입니다. Claude Code가 `skills/` 하위를
+**자동 탐색**하므로 plugin.json에 경로를 적을 필요가 없습니다.
+
 ```
-plugins/<skill-name>/
+plugins/<plugin-name>/
   .claude-plugin/plugin.json
-  .claude/skills/<skill-name>/SKILL.md
+  skills/
+    <skill-name>/SKILL.md          # 스킬 1개
+    <other-skill>/SKILL.md         # 한 플러그인에 여러 스킬 가능 (예: higgsfield 4종)
   README.md            # 선택이지만 권장
 ```
 
-`.claude/skills/<skill-name>/SKILL.md` 의 프론트매터:
+`skills/<skill-name>/SKILL.md` 의 프론트매터:
 
 ```markdown
 ---
@@ -28,17 +33,21 @@ description: 언제 발동하는지 한 줄. 트리거 키워드 포함.
 
 ```json
 {
-  "name": "<skill-name>",
+  "name": "<plugin-name>",
   "version": "1.0.0",
   "description": "...",
   "author": { "name": "sungwooHa" },
-  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/<skill-name>",
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/<plugin-name>",
   "repository": "https://github.com/sungwooHa/skills-marketplace",
   "license": "MIT",
-  "keywords": ["..."],
-  "skills": ["./.claude/skills/"]
+  "keywords": ["..."]
 }
 ```
+
+`skills` 필드는 넣지 않습니다 — `skills/` 자동 탐색이 표준입니다.
+
+> **레거시**: `travel-proposal` 플러그인은 구형 레이아웃(`.claude/skills/` 중첩 + plugin.json `"skills"` 필드)을
+> 아직 사용합니다. 신규 스킬은 위 표준 레이아웃을 따르세요. (`higgsfield`가 표준 레이아웃 예시입니다.)
 
 ## 3. 마켓플레이스 카탈로그에 등록
 
@@ -47,7 +56,7 @@ description: 언제 발동하는지 한 줄. 트리거 키워드 포함.
 ```json
 {
   "name": "<skill-name>",
-  "source": "./plugins/<skill-name>",
+  "source": "./plugins/<plugin-name>",
   "description": "...",
   "version": "1.0.0",
   "keywords": ["..."]

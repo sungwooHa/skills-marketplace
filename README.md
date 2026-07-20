@@ -42,12 +42,13 @@ _(스킬은 계속 추가됩니다.)_
 
 ## 새 스킬 추가하는 법
 
-1. `plugins/<skill-name>/` 폴더를 만들고 그 안에:
-   - `.claude-plugin/plugin.json` (name·version·description·skills 경로)
-   - `.claude/skills/<skill-name>/SKILL.md` (+ 필요하면 `references/`)
+1. `plugins/<plugin-name>/` 폴더를 만들고 그 안에:
+   - `.claude-plugin/plugin.json` (name·version·description — `skills` 경로 필드는 불필요)
+   - `skills/<skill-name>/SKILL.md` (+ 필요하면 `references/`). `skills/` 하위는 **자동 탐색**되며,
+     한 플러그인에 스킬 여러 개를 둘 수 있습니다 (예: `higgsfield` 4종).
 2. 루트 `.claude-plugin/marketplace.json` 의 `plugins[]` 에 한 항목 추가:
    ```json
-   { "name": "<skill-name>", "source": "./plugins/<skill-name>", "description": "...", "version": "1.0.0", "keywords": ["..."] }
+   { "name": "<plugin-name>", "source": "./plugins/<plugin-name>", "description": "...", "version": "1.0.0", "keywords": ["..."] }
    ```
 3. 커밋 → 푸시. 사용자는 `/plugin marketplace update` 후 새 스킬을 설치할 수 있습니다.
 
@@ -58,14 +59,15 @@ _(스킬은 계속 추가됩니다.)_
 ```
 .claude-plugin/marketplace.json     # 전체 스킬 목록(플러그인 카탈로그)
 plugins/
-  travel-proposal/
+  travel-proposal/                  # ⚠ 레거시 레이아웃 (.claude/skills/ 중첩)
     .claude-plugin/plugin.json
     .claude/skills/travel-proposal/  SKILL.md + references/
     README.md
-  higgsfield/
+  higgsfield/                       # ✅ 표준 레이아웃 (skills/ 자동 탐색)
     .claude-plugin/plugin.json
     skills/higgsfield-{conti,estimate,generate,soul-id}/  SKILL.md + references/
     higgsfield.local.md.example      # 프로젝트별 예산·정책 주입 템플릿
+    NOTICE                           # 제3자 콘텐츠 출처 고지 (generate는 MIT 아님)
     README.md
 install.sh                          # 특정 스킬만 로컬 심링크(선택)
 HOWTO-add-skill.md
