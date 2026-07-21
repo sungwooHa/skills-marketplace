@@ -1,0 +1,22 @@
+{
+  "name": "humanize-korean",
+  "version": "2.0.0",
+  "description": "한글 AI 티 제거 번들. AI(ChatGPT·Claude·Gemini 등)가 쓴 한국어 텍스트를 내용은 한 글자도 바꾸지 않고 문체·리듬·표현만 자연스럽게 윤문한다. taxonomy v2.0 — 10대 카테고리 60+ 패턴, 한국 번역학계 8대 번역투 계보(이영옥·김정우·김도훈·김혜영) + post-editese 3축(Baker·Toury·Toral) 반영. Fast 모드는 monolith 단일 호출(도구 3회 캡), strict 모드는 5인 파이프라인. 회귀 하네스(metrics + baseline) 동반 배포.",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/humanize-korean",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "humanize",
+    "korean",
+    "한글",
+    "윤문",
+    "번역투",
+    "translationese",
+    "ai-detection",
+    "post-editing",
+    "style-rewriting"
+  ]
+}
