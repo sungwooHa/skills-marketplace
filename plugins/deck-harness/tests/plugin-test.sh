@@ -227,5 +227,77 @@ absent "no __pycache__ committed"                 '__pycache__'
   && check "no .DS_Store" 0 || check "no .DS_Store" 1
 
 echo
+echo "=== M. Palette catalog: structural invariants ==="
+# The hex values themselves are the author's own, field-proven work and may legitimately churn, so nothing
+# here hardcodes a color. What is asserted is the structure that actually makes the catalog usable: three
+# presets, well-formed tables, exactly one accent per preset, and verdict colors that never collide with the
+# accent/category colors (the role separation the catalog exists to teach).
+PAL_PY="$(mktemp)"
+cat >"$PAL_PY" <<'PY'
+import re, sys
+
+src = open(sys.argv[1], encoding='utf-8').read()
+out = []
+def chk(ok, label): out.append(("OK" if ok else "NO") + "|" + label)
+
+secs = {}
+for m in re.finditer(r'^## ([A-Z])\. ', src, re.M):
+    start = m.end()
+    nxt = re.search(r'^## ', src[start:], re.M)
+    secs[m.group(1)] = src[start:start + (nxt.start() if nxt else len(src))]
+
+chk(sorted(secs) == ['A', 'B', 'C'], "catalog defines exactly 3 presets (A/B/C)")
+
+HEX = re.compile(r'#[0-9A-Fa-f]{3}(?:[0-9A-Fa-f]{3})?(?![0-9A-Fa-f])')
+bad = [t for t in re.findall(r'`(#[^`]*)`', src)
+       if not re.fullmatch(r'#(?:[0-9A-Fa-f]{3}|[0-9A-Fa-f]{6})', t)]
+chk(not bad, "every quoted color literal is a well-formed hex" + (" — bad: %s" % bad if bad else ""))
+
+def cells(row): return [c.strip() for c in row.strip().strip('|').split('|')]
+
+for k in sorted(secs):
+    rows = [r for r in secs[k].splitlines() if r.strip().startswith('|')]
+    ok_tbl = len(rows) >= 3 and set(rows[1].replace('|', '').strip()) <= set('-: ')
+    chk(ok_tbl, "preset %s: token table is well-formed (header + separator + rows)" % k)
+    if not ok_tbl:
+        continue
+    body = rows[2:]
+    chk(all(HEX.search(r) for r in body), "preset %s: every token row carries a hex value" % k)
+
+    accent = [r for r in body if re.search(r'accent|hero', cells(r)[0], re.I)]
+    chk(len(accent) == 1,
+        "preset %s: declares exactly one accent color (got %d)" % (k, len(accent)))
+
+    def role(r):
+        c = cells(r)
+        return c[0] + ' ' + (c[2] if len(c) > 2 else '')
+    verdict = {h.lower() for r in body if re.search(r'verdict|--go|--stop', role(r), re.I)
+               for h in HEX.findall(r)}
+    category = {h.lower() for r in body if re.search(r'accent|hero|axis|category', role(r), re.I)
+                for h in HEX.findall(r)}
+    if verdict:
+        chk(bool(category) and not (verdict & category),
+            "preset %s: verdict colors stay disjoint from accent/category colors" % k)
+
+chk(re.search(r'field-proven|actually shipped|survived adversarial verification', src) is not None,
+    "catalog states its presets are proven on real decks (provenance framing intact)")
+chk(re.search(r'at least one real deployment', src) is not None,
+    "promotion criterion still requires at least one real deployment")
+
+print('\n'.join(out))
+PY
+PAL_OUT="$(python3 "$PAL_PY" "$PLUGIN/$GP/references/palette-presets.md" 2>&1)"; PAL_RC=$?
+rm -f "$PAL_PY"
+if [ "$PAL_RC" -ne 0 ] || [ -z "$PAL_OUT" ]; then
+  # Never let a broken checker pass silently — an assertion block that runs zero assertions is a failure.
+  check "palette invariant checker ran (python exit $PAL_RC): $PAL_OUT" 1
+else
+  while IFS='|' read -r st label; do
+    [ -z "${label:-}" ] && continue
+    [ "$st" = "OK" ] && check "$label" 0 || check "$label" 1
+  done <<< "$PAL_OUT"
+fi
+
+echo
 echo "================ PASS=$PASS  FAIL=$FAIL ================"
 [ "$FAIL" -eq 0 ]
