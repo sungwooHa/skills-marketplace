@@ -28,6 +28,13 @@
       "description": "별(스타필드) 모션 에셋 제작 — 연출 의도를 spec(JSON)으로 기술 → 콘티 HTML 승인 게이트 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. 파생 HTML 복제 금지. 렌더에 Chrome·ffmpeg 필요.",
       "version": "1.0.0",
       "keywords": ["starfield", "별", "motion", "gif", "mp4", "canvas", "deterministic-render", "콘티", "keynote", "background"]
+    },
+    {
+      "name": "humanize-korean",
+      "source": "./plugins/humanize-korean",
+      "description": "한글 AI 티 제거 번들. AI가 쓴 한국어를 내용 불변으로 문체·리듬만 윤문. taxonomy v2.0 — 10대 카테고리 71패턴, 한국 번역학계 8대 번역투 계보 + post-editese 3축 반영. Fast(monolith 1콜)/Strict(5인 파이프라인) 2모드. 회귀 하네스 168 assertion 동반.",
+      "version": "2.0.0",
+      "keywords": ["humanize", "korean", "한글", "윤문", "번역투", "translationese", "ai-detection", "post-editing", "style-rewriting"]
     }
   ]
 }

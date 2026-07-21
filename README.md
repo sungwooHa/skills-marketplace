@@ -1,7 +1,7 @@
 # skills-marketplace
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
-[![skills](https://img.shields.io/badge/skills-2-4C9A2A)](#수록-스킬)
+[![skills](https://img.shields.io/badge/skills-4-4C9A2A)](#수록-스킬)
 [![license](https://img.shields.io/badge/license-MIT%20(exceptions)-blue)](#라이선스)
 [![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
 [![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
@@ -36,6 +36,7 @@ cd skills-marketplace
 | [**travel-proposal**](./plugins/travel-proposal) | 여행 기획서를 오프라인 자립형 인터랙티브 HTML(주제탭·지도·카드·Airbnb 디자인)로 제작. 한국어 개조식. |
 | [**higgsfield**](./plugins/higgsfield) | Higgsfield 영상·이미지 생성 4스킬 번들. 콘티(G1) → 견적(G3) → 생성 게이트 체인 + Soul 레퍼런스 학습. 무콘티·무견적 생성 금지. |
 | [**starfield-studio**](./plugins/starfield-studio) | 별(스타필드) 모션 에셋 제작. spec(JSON) → 콘티 승인 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. |
+| [**humanize-korean**](./plugins/humanize-korean) | 한글 AI 티 제거. 내용은 한 글자도 안 건드리고 문체·리듬만 윤문. 71패턴 분류 체계 + 회귀 하네스 168 assertion. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
