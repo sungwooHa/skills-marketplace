@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>{{DECK_TITLE}} — 발표자 스크립트 뷰</title>
+<style>
+  /* ===== Fonts (presentation deck와 통일) ===== */
+  @font-face { font-family: 'DeckSans'; font-weight: 200; src: url('./assets/fonts/DeckSans-200.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 300; src: url('./assets/fonts/DeckSans-300.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 400; src: url('./assets/fonts/DeckSans-400.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 500; src: url('./assets/fonts/DeckSans-500.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 600; src: url('./assets/fonts/DeckSans-600.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 700; src: url('./assets/fonts/DeckSans-700.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 800; src: url('./assets/fonts/DeckSans-800.otf') format('opentype'); }
+  @font-face { font-family: 'DeckSans'; font-weight: 900; src: url('./assets/fonts/DeckSans-900.otf') format('opentype'); }
+
+  :root {
+    --bg-navy: #0A0F21;
+    --bg-soft: #11172E;
+    --text: #F5F7FB;
+    --text-dim: rgba(245,247,251,0.55);
+    --accent: #398EF6;
+    --accent-quote: #FFD66B;
+    --silence: rgba(245,247,251,0.4);
+    --rule: rgba(255,255,255,0.08);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html, body {
+    width: 100%; height: 100%; overflow: hidden;
+    font-family: 'DeckSans', -apple-system, 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    background: var(--bg-navy);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .stage {
+    position: fixed; inset: 0;
+    display: flex; flex-direction: column;
+  }
+
+  /* ===== Top bar ===== */
+  .topbar {
+    flex: 0 0 auto;
+    height: 6vh; min-height: 44px;
+    padding: 0 2.5vw;
+    background: rgba(0,0,0,0.35);
+    border-bottom: 1px solid var(--rule);
+    display: flex; align-items: center; gap: 1.2vw;
+    font-size: clamp(11px, 1.1vw, 16px);
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+  .topbar .deck-title {
+    font-weight: 700; color: var(--text);
+    letter-spacing: -0.01em;
+  }
+  .topbar .sep { opacity: 0.4; }
+  .topbar .act-name { color: var(--accent); font-weight: 600; }
+  .topbar .clock { margin-left: auto; font-variant-numeric: tabular-nums; }
+  .topbar .counter { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; }
+
+  /* ===== Slides ===== */
+  .slides {
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+  }
+  .slide {
+    position: absolute; inset: 0;
+    display: none;
+    flex-direction: column;
+    padding: 4vh 5vw 3vh;
+  }
+  .slide.active { display: flex; }
+
+  /* Cover */
+  .slide.cover { justify-content: center; align-items: flex-start; padding: 8vh 8vw; }
+  .slide.cover h1 {
+    font-size: clamp(48px, 7vw, 120px);
+    font-weight: 800;
+    letter-spacing: -0.025em;
+    line-height: 1.05;
+    margin-bottom: 1.5vh;
+  }
+  .slide.cover .sub {
+    font-size: clamp(20px, 2.4vw, 40px);
+    color: var(--accent);
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    margin-bottom: 5vh;
+  }
+  .slide.cover .meta {
+    font-size: clamp(14px, 1.4vw, 24px);
+    line-height: 2;
+    color: var(--text-dim);
+  }
+  .slide.cover .meta b { color: var(--text); font-weight: 700; margin-right: 0.6em; }
+
+  /* Act break */
+  .slide.actbreak { justify-content: center; align-items: center; text-align: center; padding: 8vh 8vw; }
+  .slide.actbreak .act-label {
+    font-size: clamp(14px, 1.3vw, 22px);
+    color: var(--accent);
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    margin-bottom: 3vh;
+  }
+  .slide.actbreak .act-title {
+    font-size: clamp(40px, 5.5vw, 96px);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    margin-bottom: 4vh;
+  }
+  .slide.actbreak .act-meta {
+    font-size: clamp(16px, 1.6vw, 28px);
+    color: var(--text-dim);
+    letter-spacing: 0.02em;
+  }
+
+  /* Page slide */
+  .slide.page .page-head {
+    flex: 0 0 auto;
+    display: flex; align-items: baseline; gap: 1.4vw;
+    margin-bottom: 2.2vh;
+    padding-bottom: 1.6vh;
+    border-bottom: 1px solid var(--rule);
+  }
+  .slide.page .pnum {
+    font-size: clamp(11px, 1.05vw, 15px);
+    font-weight: 800;
+    color: #fff;
+    background: var(--accent);
+    padding: 0.4vh 1.2vw;
+    border-radius: 999px;
+    letter-spacing: 0.08em;
+    flex: 0 0 auto;
+  }
+  .slide.page .ptitle {
+    font-size: clamp(22px, 2.4vw, 44px);
+    font-weight: 700;
+    letter-spacing: -0.015em;
+    line-height: 1.2;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+  .slide.page .pact {
+    font-size: clamp(11px, 1vw, 15px);
+    color: var(--text-dim);
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    flex: 0 0 auto;
+  }
+  .slide.page .script-wrap {
+    flex: 1 1 auto;
+    overflow: hidden;
+    display: flex;
+    align-items: flex-start;
+  }
+  .slide.page .script {
+    width: 100%;
+    font-size: 32px; /* JS가 화면에 맞춰 자동 조정 */
+    line-height: 1.7;
+    letter-spacing: -0.005em;
+    white-space: pre-line;
+    color: var(--text);
+    word-break: keep-all;
+  }
+  .slide.page.silent .script {
+    color: var(--silence);
+    font-style: italic;
+    text-align: center;
+    width: 100%;
+  }
+  .slide.page.silent .script-wrap { align-items: center; justify-content: center; }
+  .slide.page .script .accent { color: var(--accent); font-weight: 700; }
+  .slide.page .script .quote { color: var(--accent-quote); font-weight: 600; }
+  .slide.page .script .silence { color: var(--silence); font-style: italic; }
+
+  /* ===== Bottom bar ===== */
+  .bottombar {
+    flex: 0 0 auto;
+    height: 5vh; min-height: 36px;
+    background: rgba(0,0,0,0.35);
+    border-top: 1px solid var(--rule);
+    display: flex; align-items: center;
+    padding: 0 2.5vw;
+    gap: 2vw;
+    font-size: clamp(10px, 0.95vw, 14px);
+    color: var(--text-dim);
+  }
+  .progress {
+    flex: 1 1 auto;
+    height: 4px;
+    background: rgba(255,255,255,0.08);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+  .progress .bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--accent), #6BB1FF);
+    transition: width 0.35s ease;
+  }
+  .hints { letter-spacing: 0.02em; white-space: nowrap; }
+  .hints kbd {
+    display: inline-block;
+    padding: 0.1em 0.5em;
+    margin: 0 0.1em;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.92em;
+    color: var(--text);
+  }
+
+  /* ===== Click zones (전체 화면 좌/우 절반 클릭으로 페이지 이동) ===== */
+  .click-zone {
+    position: fixed;
+    top: 6vh; bottom: 5vh;
+    width: 30vw;
+    z-index: 5;
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+  .click-zone.left { left: 0; }
+  .click-zone.right { right: 0; }
+  .click-zone:hover { opacity: 1; }
+  .click-zone .arrow {
+    position: absolute;
+    top: 50%; transform: translateY(-50%);
+    width: 64px; height: 64px;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    display: grid; place-items: center;
+    font-size: 36px; font-weight: 300;
+    border: 1px solid rgba(255,255,255,0.15);
+  }
+  .click-zone.left .arrow { left: 3vw; }
+  .click-zone.right .arrow { right: 3vw; }
+
+  /* ===== Help overlay ===== */
+  .help {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    display: none;
+    align-items: center; justify-content: center;
+    z-index: 100;
+  }
+  .help.show { display: flex; }
+  .help-card {
+    background: var(--bg-soft);
+    border: 1px solid var(--rule);
+    border-radius: 16px;
+    padding: 4vh 4vw;
+    max-width: 600px;
+    font-size: clamp(14px, 1.3vw, 20px);
+    line-height: 2;
+  }
+  .help-card h2 {
+    font-size: 1.5em;
+    font-weight: 800;
+    margin-bottom: 1em;
+    color: var(--accent);
+  }
+  .help-card kbd {
+    display: inline-block;
+    min-width: 2.4em;
+    padding: 0.15em 0.6em;
+    margin-right: 0.6em;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 6px;
+    text-align: center;
+    font-family: inherit;
+  }
+  .help-card .row { display: flex; gap: 1em; align-items: center; }
+  .help-card .close-hint { margin-top: 1.5em; color: var(--text-dim); font-size: 0.9em; }
+</style>
+</head>
+<body>
+
+<div class="stage">
+
+  <!-- Top bar -->
+  <header class="topbar">
+    <span class="deck-title">{{DECK_TITLE}}</span>
+    <span class="sep">·</span>
+    <span class="act-name" id="act-name">Intro</span>
+    <span class="sep">·</span>
+    <span id="page-label">Cover</span>
+    <span class="clock"><span id="counter">1 / 41</span> &nbsp;·&nbsp; <span id="elapsed">00:00</span></span>
+  </header>
+
+  <!-- Slides -->
+  <main class="slides" id="slides">
+
+    <!-- SCRIPT_SLIDES_START -->
+    <!-- deck-builder가 스크립트 슬라이드를 여기에 삽입합니다 -->
+    <!-- SCRIPT_SLIDES_END -->
+
+
+  </main>
+
+  <!-- Bottom bar -->
+  <footer class="bottombar">
+    <div class="progress"><div class="bar" id="progress-bar"></div></div>
+    <div class="hints">
+      <kbd>←</kbd><kbd>→</kbd> 이동 ·
+      <kbd>Space</kbd> 다음 ·
+      <kbd>F</kbd> 전체화면 ·
+      <kbd>T</kbd> 타이머 ·
+      <kbd>?</kbd> 도움말
+      <span id="link-badge" style="margin-left:14px; padding:2px 8px; border-radius:6px; background:rgba(57,142,246,0.18); color:#9CC7FF; font-size:11px; display:none;">DECK LINK</span>
+    </div>
+  </footer>
+
+  <!-- Click zones -->
+  <div class="click-zone left" id="zone-prev"><div class="arrow">‹</div></div>
+  <div class="click-zone right" id="zone-next"><div class="arrow">›</div></div>
+
+  <!-- Help overlay -->
+  <div class="help" id="help">
+    <div class="help-card">
+      <h2>발표자 스크립트 뷰</h2>
+      <div class="row"><kbd>→</kbd><kbd>Space</kbd><kbd>PgDn</kbd> 다음 페이지</div>
+      <div class="row"><kbd>←</kbd><kbd>PgUp</kbd> 이전 페이지</div>
+      <div class="row"><kbd>Home</kbd> 처음으로 · <kbd>End</kbd> 마지막으로</div>
+      <div class="row"><kbd>F</kbd> 전체화면 토글</div>
+      <div class="row"><kbd>T</kbd> 발표 타이머 시작/정지</div>
+      <div class="row"><kbd>R</kbd> 타이머 리셋</div>
+      <div class="row"><kbd>?</kbd> / <kbd>Esc</kbd> 도움말 닫기</div>
+      <div class="close-hint">화면 좌·우측 가장자리 클릭으로도 페이지를 넘길 수 있습니다.</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+(function() {
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const total = slides.length;
+  let current = 0;
+
+  const $counter = document.getElementById('counter');
+  const $bar = document.getElementById('progress-bar');
+  const $actName = document.getElementById('act-name');
+  const $pageLabel = document.getElementById('page-label');
+  const $elapsed = document.getElementById('elapsed');
+  const $help = document.getElementById('help');
+
+  // ===== Sync mapping (only .page slides correspond to main deck) =====
+  const pageSlides = slides.filter(s => s.classList.contains('page'));
+  const pageToAllIdx = pageSlides.map(s => slides.indexOf(s));
+  const allIdxToPageIdx = new Map();
+  pageSlides.forEach((s, i) => { allIdxToPageIdx.set(slides.indexOf(s), i); });
+
+  const SYNC_CHANNEL = 'mirror-deck-sync';
+  let bc = null;
+  try { bc = new BroadcastChannel(SYNC_CHANNEL); } catch (e) {}
+  let suppressBroadcast = false;
+
+  function broadcastSync(allIdx) {
+    if (suppressBroadcast) return;
+    const pageIdx = allIdxToPageIdx.get(allIdx);
+    if (typeof pageIdx !== 'number') return;
+    const msg = { type: 'sync', syncIdx: pageIdx, source: 'presenter' };
+    if (bc) { try { bc.postMessage(msg); } catch (e) {} }
+    if (window.opener && !window.opener.closed) {
+      try { window.opener.postMessage(msg, '*'); } catch (e) {}
+    }
+  }
+
+  const $linkBadge = document.getElementById('link-badge');
+  function handleRemote(msg) {
+    if (!msg || msg.source === 'presenter') return;
+    if (msg.type === 'sync' && typeof msg.syncIdx === 'number') {
+      const targetAll = pageToAllIdx[Math.max(0, Math.min(pageToAllIdx.length - 1, msg.syncIdx))];
+      if (typeof targetAll === 'number' && targetAll !== current) {
+        suppressBroadcast = true;
+        goTo(targetAll);
+        suppressBroadcast = false;
+      }
+      if ($linkBadge) $linkBadge.style.display = 'inline-block';
+    }
+  }
+
+  if (bc) bc.onmessage = (e) => handleRemote(e.data);
+  window.addEventListener('message', (e) => handleRemote(e.data));
+
+  function fitActiveSlide() {
+    const slide = slides[current];
+    if (!slide) return;
+    const wrap = slide.querySelector('.script-wrap');
+    const script = slide.querySelector('.script');
+    if (!wrap || !script) return;
+
+    // 시작 폰트 크기: 화면 높이의 ~3.5%
+    const vh = window.innerHeight;
+    let fs = Math.max(20, Math.min(56, vh * 0.035));
+    script.style.fontSize = fs + 'px';
+
+    // 줄어들면서 fit
+    let safety = 60;
+    while ((script.scrollHeight > wrap.clientHeight + 1 || script.scrollWidth > wrap.clientWidth + 1) && fs > 12 && safety-- > 0) {
+      fs -= 1;
+      script.style.fontSize = fs + 'px';
+    }
+    // 짧은 텍스트면 더 키우기
+    if (script.scrollHeight < wrap.clientHeight * 0.5 && fs < 64) {
+      let upSafety = 60;
+      while (script.scrollHeight < wrap.clientHeight * 0.85 && script.scrollWidth < wrap.clientWidth * 0.95 && fs < 72 && upSafety-- > 0) {
+        fs += 1;
+        script.style.fontSize = fs + 'px';
+      }
+      // 한 단계 줄여 안전 마진
+      if (script.scrollHeight > wrap.clientHeight) {
+        script.style.fontSize = (--fs) + 'px';
+      }
+    }
+  }
+
+  function goTo(i) {
+    i = Math.max(0, Math.min(total - 1, i));
+    if (i === current && slides[current].classList.contains('active')) {
+      // 첫 호출 보장
+    }
+    slides.forEach((s, idx) => s.classList.toggle('active', idx === i));
+    current = i;
+    const slide = slides[i];
+    $counter.textContent = (i + 1) + ' / ' + total;
+    $bar.style.width = ((i + 1) / total * 100) + '%';
+    $actName.textContent = slide.dataset.actName || '';
+    $pageLabel.textContent = slide.dataset.pageLabel || '';
+    // URL hash 업데이트 (북마크/리프레시 보존)
+    history.replaceState(null, '', '#' + (i + 1));
+    requestAnimationFrame(fitActiveSlide);
+    broadcastSync(i);
+  }
+
+  // ===== Timer =====
+  let timerStart = null;
+  let timerAccum = 0;
+  let timerHandle = null;
+  function fmt(ms) {
+    const s = Math.floor(ms / 1000);
+    const m = Math.floor(s / 60);
+    const ss = s % 60;
+    return String(m).padStart(2, '0') + ':' + String(ss).padStart(2, '0');
+  }
+  function tickTimer() {
+    const now = Date.now();
+    const ms = timerAccum + (timerStart ? (now - timerStart) : 0);
+    $elapsed.textContent = fmt(ms);
+  }
+  function toggleTimer() {
+    if (timerStart) {
+      timerAccum += Date.now() - timerStart;
+      timerStart = null;
+      clearInterval(timerHandle);
+      timerHandle = null;
+    } else {
+      timerStart = Date.now();
+      timerHandle = setInterval(tickTimer, 250);
+    }
+    tickTimer();
+  }
+  function resetTimer() {
+    timerStart = null; timerAccum = 0;
+    clearInterval(timerHandle); timerHandle = null;
+    tickTimer();
+  }
+
+  // ===== Keyboard =====
+  document.addEventListener('keydown', function(e) {
+    if ($help.classList.contains('show')) {
+      if (e.key === 'Escape' || e.key === '?') {
+        $help.classList.remove('show');
+        e.preventDefault();
+      }
+      return;
+    }
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'PageDown':
+      case ' ':
+        e.preventDefault(); goTo(current + 1); break;
+      case 'ArrowLeft':
+      case 'PageUp':
+        e.preventDefault(); goTo(current - 1); break;
+      case 'Home':
+        e.preventDefault(); goTo(0); break;
+      case 'End':
+        e.preventDefault(); goTo(total - 1); break;
+      case 'f':
+      case 'F':
+        e.preventDefault();
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen?.();
+        } else {
+          document.exitFullscreen?.();
+        }
+        break;
+      case 't':
+      case 'T':
+        e.preventDefault(); toggleTimer(); break;
+      case 'r':
+      case 'R':
+        e.preventDefault(); resetTimer(); break;
+      case '?':
+      case '/':
+        e.preventDefault(); $help.classList.toggle('show'); break;
+    }
+  });
+
+  // ===== Click zones =====
+  document.getElementById('zone-prev').addEventListener('click', () => goTo(current - 1));
+  document.getElementById('zone-next').addEventListener('click', () => goTo(current + 1));
+
+  // 도움말 클릭으로 닫기
+  $help.addEventListener('click', () => $help.classList.remove('show'));
+
+  // ===== Resize =====
+  let resizeT;
+  window.addEventListener('resize', function() {
+    clearTimeout(resizeT);
+    resizeT = setTimeout(fitActiveSlide, 80);
+  });
+
+  // ===== Init =====
+  function init() {
+    let start = 0;
+    if (location.hash) {
+      const n = parseInt(location.hash.slice(1), 10);
+      if (!isNaN(n) && n >= 1 && n <= total) start = n - 1;
+    }
+    goTo(start);
+    // 메인 덱에 현재 상태 동기화 요청
+    const hello = { type: 'request-sync', source: 'presenter' };
+    if (bc) { try { bc.postMessage(hello); } catch (e) {} }
+    if (window.opener && !window.opener.closed) {
+      try { window.opener.postMessage(hello, '*'); } catch (e) {}
+    }
+  }
+  // 폰트 로드 후 한 번 더 fit
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(() => fitActiveSlide());
+  }
+  init();
+})();
+</script>
+
+</body>
+</html>
