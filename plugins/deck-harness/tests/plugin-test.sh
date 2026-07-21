@@ -168,7 +168,6 @@ exists "$GP/references/data-viz-guide.md"
 exists "skills/feedback-consolidator/scripts/consolidate_feedback.py"
 exists "README.md"
 exists "deck-harness.local.md.example"
-exists "PLUGIN-ENTRY.md"
 
 # Every ${CLAUDE_PLUGIN_ROOT}/... path mentioned in skills+agents must resolve to a real file.
 MISSING=""

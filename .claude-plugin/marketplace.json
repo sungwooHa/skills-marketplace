@@ -35,6 +35,13 @@
       "description": "한글 AI 티 제거 번들. AI가 쓴 한국어를 내용 불변으로 문체·리듬만 윤문. taxonomy v2.0 — 10대 카테고리 71패턴, 한국 번역학계 8대 번역투 계보 + post-editese 3축 반영. Fast(monolith 1콜)/Strict(5인 파이프라인) 2모드. 회귀 하네스 168 assertion 동반.",
       "version": "2.0.0",
       "keywords": ["humanize", "korean", "한글", "윤문", "번역투", "translationese", "ai-detection", "post-editing", "style-rewriting"]
+    },
+    {
+      "name": "deck-harness",
+      "source": "./plugins/deck-harness",
+      "description": "발표자료(덱) 제작 하네스 — 9개 에이전트가 PLAN→BUILD→VERIFY 3단계로 HTML 슬라이드 + 발표자 스크립트 뷰어 + PPTX를 만든다. plan.md 사용자 승인 게이트 + 5축 병렬 검증(빌드/의도/디자인/발표/한국어 자연스러움), 1축이라도 CRITICAL이면 통과 불가. 검증 결과는 피드백 루프로 누적돼 다음 덱의 에이전트 체크리스트가 된다.",
+      "version": "1.0.0",
+      "keywords": ["presentation", "deck", "slides", "발표자료", "슬라이드", "pptx", "keynote", "html-slides", "agent-team", "verification-gate", "presenter-script"]
     }
   ]
 }
