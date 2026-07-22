@@ -1,0 +1,89 @@
+NOTICE — provenance of the `humanize-korean` plugin
+===================================================
+
+Origin
+------
+This plugin descends from **im-not-ai / Humanize KR**, created and maintained by
+epoko77-ai (이승현).
+
+- Upstream repository: https://github.com/epoko77-ai/im-not-ai
+- Upstream license: **MIT** — `Copyright (c) 2026 epoko77-ai`
+- Upstream version this plugin descends from: v1.5
+- Upstream state at the time of packaging: commit `3fab1d8`, 2026-04-26
+
+The MIT license permits redistribution and modification provided the copyright
+notice is preserved. It is preserved here:
+
+    MIT License
+
+    Copyright (c) 2026 epoko77-ai
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+
+Upstream credit, not upstream canon
+-----------------------------------
+`epoko77-ai/im-not-ai` is the **origin** of this work and is credited as such.
+It is not the canonical source for this plugin. It lives under a different
+GitHub account, and this marketplace runs a personal capture → promotion loop
+that cannot gate on write access to someone else's repository. Nothing from this
+plugin has been or will be pushed upstream as part of packaging it here.
+
+If the upstream project wants any of the v2.0 material below, it is MIT and
+freely available — but that would be a deliberate contribution, not an
+automatic sync.
+
+Modifications relative to upstream v1.5
+---------------------------------------
+Substantial. This plugin is **v2.0.0** and is not byte-compatible with upstream.
+
+1. **Taxonomy raised v1.5 → v2.0.** Added the Korean translation-studies lineage
+   (8 번역투 types) and the post-editese literature. New patterns: `A-16`
+   (영어 대명사 직역), `A-18` (관계절 좌향 수식), `A-19` (이중 조사 결합), `E-7`
+   (청자 경어법 일관성). Reinforced: `A-15`, `A-7`, `F-4`, `E-2`. `A-17` is
+   held pending evidence. Earlier v1.6 additions (`C-11`, `C-12`, `E-5`, `E-6`,
+   `G-3`) are also included.
+2. **Added a quantitative metric layer** absent upstream: `metrics.py` +
+   `baseline.json` (8 metrics) and `metrics_v2.py` + `baseline_v2.json`
+   (14 post-editese / T1–T8 metrics), plus a regression harness in `tests/`.
+3. **Added `scholarship.md`**, the academic citation record backing the v2.0
+   patterns.
+4. **Fixed a path-anchoring defect** that had agents reading reference files at
+   bare relative paths, which resolve against the user's working directory
+   rather than the skill directory — so the rulebooks were silently never read.
+5. **Instruction prose converted to English**, rewritten from the v2.0 content
+   rather than translated from the older English lineage. All Korean pattern
+   names, example sentences, lexicon data, scholar citations, trigger phrases,
+   and user-facing output templates are preserved verbatim in Korean — that
+   material is the substance of the skill, not prose.
+6. **Six agent definitions dropped** as build-time scaffolding or out-of-scope;
+   six ship. See README.
+
+Academic sources
+----------------
+`references/scholarship.md` cites published translation-studies scholarship —
+Korean (이근희, 김정우, 김도훈, 김순영, 김혜영, 이영옥, 곽은주, 조의연, 전영철,
+진실로, 박옥수) and international (Baker 1993, Toury 1995, Laviosa 2002,
+Chesterman 2004, Frawley 1984, Toral 2019, Sarti et al. 2022, Cho et al. 2019,
+Hayase et al. 2024). Those citations are attributions to their authors' work.
+No third-party text is redistributed here beyond ordinary scholarly citation.
+
+The `baseline.json` figures derive from the KatFish (Park et al.) and LREAD
+studies as cited in that file. `baseline_v2.json` cells are **estimates**, every
+one flagged `_placeholder: true`; they have not been calibrated against a
+non-translated Korean reference corpus. Treat v2 z-scores as directional.
