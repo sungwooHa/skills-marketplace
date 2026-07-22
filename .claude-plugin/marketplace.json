@@ -42,6 +42,13 @@
       "description": "발표자료(덱) 제작 하네스 — 9개 에이전트가 PLAN→BUILD→VERIFY 3단계로 HTML 슬라이드 + 발표자 스크립트 뷰어 + PPTX를 만든다. plan.md 사용자 승인 게이트 + 5축 병렬 검증(빌드/의도/디자인/발표/한국어 자연스러움), 1축이라도 CRITICAL이면 통과 불가. 검증 결과는 피드백 루프로 누적돼 다음 덱의 에이전트 체크리스트가 된다.",
       "version": "1.0.0",
       "keywords": ["presentation", "deck", "slides", "발표자료", "슬라이드", "pptx", "keynote", "html-slides", "agent-team", "verification-gate", "presenter-script"]
+    },
+    {
+      "name": "project-init",
+      "source": "./plugins/project-init",
+      "description": "인터뷰 기반 프로젝트 부트스트래퍼 — 의도 우선 ≤4문항 인터뷰 → spec(JSON) → 결정론 생성기가 자립형 프로젝트 뼈대를 찍어낸다. 같은 spec = 같은 프로젝트. 생성물은 상시 로드 CLAUDE.md(경계 있는 코어) + 도메인명 시드 에이전트 + advisor 게이트를 품고 외부 전역 섀시에 무의존. model: opus 고정. 트리거 — \"새 프로젝트 세팅\", \"프로젝트 초기화\", \"부트스트랩\", \"project-init\".",
+      "version": "1.0.0",
+      "keywords": ["project-init", "bootstrap", "scaffold", "부트스트랩", "프로젝트초기화", "interview", "deterministic-generator", "self-contained", "claude-md", "opus"]
     }
   ]
 }
