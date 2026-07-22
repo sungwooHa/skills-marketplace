@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>Slide Pattern Library</title>
+<style>
+/* ===== Fonts ===== */
+@font-face { font-family: 'DeckSans'; font-weight: 200; src: url('./assets/fonts/DeckSans-200.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 300; src: url('./assets/fonts/DeckSans-300.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 400; src: url('./assets/fonts/DeckSans-400.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 500; src: url('./assets/fonts/DeckSans-500.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 600; src: url('./assets/fonts/DeckSans-600.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 700; src: url('./assets/fonts/DeckSans-700.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 800; src: url('./assets/fonts/DeckSans-800.otf') format('opentype'); }
+@font-face { font-family: 'DeckSans'; font-weight: 900; src: url('./assets/fonts/DeckSans-900.otf') format('opentype'); }
+
+:root {
+  --bg-navy: #0A0F21;
+  --bg-black: #000000;
+  --bg-white: #FFFFFF;
+  --accent: #398EF6;
+  --red-cross: #E63946;
+  --text-white: #FFFFFF;
+  --text-w60: rgba(255,255,255,0.6);
+  --text-w40: rgba(255,255,255,0.4);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DeckSans', sans-serif; background: #111; color: #eee; }
+
+.pattern-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(480px, 1fr));
+  gap: 32px;
+  padding: 40px;
+  max-width: 1600px;
+  margin: 0 auto;
+}
+
+.pattern-card {
+  background: var(--bg-navy);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.pattern-card h3 {
+  padding: 16px 24px;
+  font-weight: 700;
+  font-size: 18px;
+  color: var(--accent);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+.pattern-preview {
+  width: 100%;
+  aspect-ratio: 16/9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pattern-desc {
+  padding: 16px 24px;
+  font-size: 14px;
+  color: var(--text-w60);
+  line-height: 1.6;
+}
+
+h1 {
+  text-align: center;
+  padding: 48px 0 16px;
+  font-weight: 800;
+  font-size: 36px;
+}
+
+h1 + p {
+  text-align: center;
+  color: var(--text-w40);
+  font-size: 16px;
+  margin-bottom: 32px;
+}
+
+/* Pattern-specific styles */
+.p-cover { background: var(--bg-navy); }
+.p-cover .title { font-size: 48px; font-weight: 800; text-align: center; }
+.p-cover .subtitle { font-size: 20px; font-weight: 400; color: var(--text-w60); margin-top: 12px; text-align: center; }
+
+.p-section { background: var(--bg-black); }
+.p-section .word { font-size: 72px; font-weight: 800; text-align: center; color: var(--accent); }
+
+.p-bigidea { background: var(--bg-navy); }
+.p-bigidea .msg { font-size: 36px; font-weight: 700; text-align: center; padding: 0 60px; line-height: 1.4; }
+
+.p-imgleft { background: var(--bg-navy); display: flex !important; }
+.p-imgleft .img-area { width: 50%; background: linear-gradient(135deg, #1a2a4a, #0a1a3a); display: flex; align-items: center; justify-content: center; color: var(--text-w40); font-size: 14px; }
+.p-imgleft .text-area { width: 50%; padding: 40px; display: flex; flex-direction: column; justify-content: center; }
+.p-imgleft .text-area h4 { font-size: 28px; font-weight: 700; margin-bottom: 12px; }
+.p-imgleft .text-area p { font-size: 16px; color: var(--text-w60); line-height: 1.6; }
+
+.p-imgbg { background: linear-gradient(rgba(10,15,33,0.7), rgba(10,15,33,0.9)), linear-gradient(135deg, #1a3a5a, #0a2040); }
+.p-imgbg .overlay-text { font-size: 32px; font-weight: 700; text-align: center; padding: 0 80px; line-height: 1.4; }
+
+.p-data { background: var(--bg-navy); flex-direction: column !important; gap: 8px; }
+.p-data .metric { font-size: 72px; font-weight: 800; color: var(--accent); }
+.p-data .label { font-size: 18px; color: var(--text-w60); }
+
+.p-blacksingle { background: var(--bg-black); }
+.p-blacksingle .provoke { font-size: 96px; font-weight: 800; text-align: center; }
+
+.p-whiteclosing { background: var(--bg-white); color: #111; }
+.p-whiteclosing .promise { font-size: 28px; font-weight: 700; text-align: center; line-height: 1.5; padding: 0 60px; color: #222; }
+</style>
+</head>
+<body>
+
+<h1>Slide Pattern Library</h1>
+<p>deck-builder가 plan.md의 패턴 매핑을 따라 적용하는 8가지 기본 패턴</p>
+
+<div class="pattern-grid">
+
+  <!-- Pattern 1: Cover -->
+  <div class="pattern-card">
+    <h3>Pattern 1 — Cover (표지)</h3>
+    <div class="pattern-preview p-cover">
+      <div>
+        <div class="title">{{DECK_TITLE}}</div>
+        <div class="subtitle">{{PRESENTER}} · {{DECK_DATE}}</div>
+      </div>
+    </div>
+    <div class="pattern-desc">
+      첫 슬라이드. 대형 타이틀 (t-impact, 800w) + 서브타이틀 (400w).
+      fade.d3/d7/d13 순차 노출. 배경: navy 단색 또는 그라데이션.
+    </div>
+  </div>
+
+  <!-- Pattern 2: Section Divider -->
+  <div class="pattern-card">
+    <h3>Pattern 2 — Section Divider (Act 전환)</h3>
+    <div class="pattern-preview p-section">
+      <div class="word">Act 1</div>
+    </div>
+    <div class="pattern-desc">
+      Act 전환 슬라이드. bg-black, 단어 1~2개 (t-mega, 800w).
+      도발어("그래서?", "왜?") 또는 Act 번호. 호흡 구간.
+    </div>
+  </div>
+
+  <!-- Pattern 3: Big Idea -->
+  <div class="pattern-card">
+    <h3>Pattern 3 — Big Idea (핵심 메시지)</h3>
+    <div class="pattern-preview p-bigidea">
+      <div class="msg">한 문장으로 표현되는<br>핵심 메시지</div>
+    </div>
+    <div class="pattern-desc">
+      한 문장 중앙 정렬 (t-headline, 700w). 여백 최대화.
+      1슬라이드 1메시지 원칙의 가장 순수한 형태.
+    </div>
+  </div>
+
+  <!-- Pattern 4: Image + Side Text -->
+  <div class="pattern-card">
+    <h3>Pattern 4 — Image + Side Text (좌우 분할)</h3>
+    <div class="pattern-preview p-imgleft">
+      <div class="img-area">[이미지 영역]</div>
+      <div class="text-area">
+        <h4>제목</h4>
+        <p>설명 텍스트가 이미지 옆에 배치됩니다. 수직 중앙 정렬.</p>
+      </div>
+    </div>
+    <div class="pattern-desc">
+      좌 50% 이미지 + 우 50% 텍스트 (또는 반대).
+      gradient-left 오버레이로 텍스트 가독성 확보.
+    </div>
+  </div>
+
+  <!-- Pattern 5: Image BG + Center Text -->
+  <div class="pattern-card">
+    <h3>Pattern 5 — Image BG + Center Text (이미지 배경)</h3>
+    <div class="pattern-preview p-imgbg">
+      <div class="overlay-text">풀블리드 이미지 위에<br>중앙 텍스트 오버레이</div>
+    </div>
+    <div class="pattern-desc">
+      풀블리드 배경 이미지 + 반투명 오버레이 (40-60% opacity).
+      텍스트: 중앙 또는 좌하단, 흰색. 감성/분위기 슬라이드에 적합.
+    </div>
+  </div>
+
+  <!-- Pattern 6: Key Metric -->
+  <div class="pattern-card">
+    <h3>Pattern 6 — Key Metric (핵심 숫자)</h3>
+    <div class="pattern-preview p-data">
+      <div class="metric">87%</div>
+      <div class="label">핵심 지표 설명</div>
+    </div>
+    <div class="pattern-desc">
+      1~3개 핵심 숫자 대형 타이포 (800w, 72-120px).
+      단위/컨텍스트는 작은 글씨로 아래에. 데이터 임팩트용.
+    </div>
+  </div>
+
+  <!-- Pattern 7: Black Single Word -->
+  <div class="pattern-card">
+    <h3>Pattern 7 — Black Single Word (도발)</h3>
+    <div class="pattern-preview p-blacksingle">
+      <div class="provoke">왜?</div>
+    </div>
+    <div class="pattern-desc">
+      bg-black, 단어 1개 (t-mega 이상, 800w).
+      도발·전환·강조. 청중에게 생각할 시간을 강제. Act 전환에도 사용.
+    </div>
+  </div>
+
+  <!-- Pattern 8: White Closing -->
+  <div class="pattern-card">
+    <h3>Pattern 8 — White Closing (클로징)</h3>
+    <div class="pattern-preview p-whiteclosing">
+      <div class="promise">매일 어제보다<br>조금 더 변하겠습니다.</div>
+    </div>
+    <div class="pattern-desc">
+      bg-white, 검은 텍스트. 마지막 슬라이드.
+      한 문장 약속 또는 CTA. navy→white 전환으로 시각적 전환.
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
