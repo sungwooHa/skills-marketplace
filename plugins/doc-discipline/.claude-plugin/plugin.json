@@ -1,0 +1,12 @@
+{
+  "name": "doc-discipline",
+  "version": "1.0.0",
+  "description": "문서 저작 규율 3종 번들 — ① dual-altitude-brief: 한 사안을 고맥락(비유·개념·가치) 지면 + 저맥락(데이터 모델·인터페이스·절차·담당·완료 판정) 지면의 짝으로 내고 항목 번호로 상호 참조, 짝 없는 항목은 미완 ② ssot-doc-pipeline: 원고(SSOT)→맥락(제작 스펙, 문서당 1개)→산출물(파생·직접 수정 금지) 3층과 수정 순서·드리프트 점검·동결·승격 규약 ③ produce-verify-pair: 제작↔검증 페르소나·세션 분리, 검증자는 판정만·수정 금지, PASS 이분 판정과 종료 조건 + 역방향 가드레일(에이전트 자율 왕복 토론 금지). 렌더링·계측 자체는 slide-craft·deck-harness 소관. 트리거 — \"경영진 보고랑 실행 스펙 같이\", \"원고랑 산출물이 안 맞아\", \"검증까지 해줘\", \"에이전트끼리 토론시켜\".",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/doc-discipline",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["documentation", "ssot", "원고", "3층위계", "dual-altitude", "고맥락", "저맥락", "verification", "adversarial-review", "produce-verify", "guardrail", "multi-agent"]
+}

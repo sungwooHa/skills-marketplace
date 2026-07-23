@@ -38,6 +38,7 @@ cd skills-marketplace
 | [**starfield-studio**](./plugins/starfield-studio) | 별(스타필드) 모션 에셋 제작. spec(JSON) → 콘티 승인 → 로컬 결정론 렌더로 GIF/MP4. 같은 spec = 같은 픽셀. |
 | [**humanize-korean**](./plugins/humanize-korean) | 한글 AI 티 제거. 내용은 한 글자도 안 건드리고 문체·리듬만 윤문. 71패턴 분류 체계 + 회귀 하네스 168 assertion. |
 | [**deck-harness**](./plugins/deck-harness) | 발표자료 덱 제작 하네스. 에이전트 9종이 PLAN→BUILD→VERIFY로 HTML 슬라이드 + 발표자 스크립트 + PPTX 생성. 5축 검증 게이트. |
+| [**doc-discipline**](./plugins/doc-discipline) | 문서 저작 규율 3종. 고맥락↔저맥락 짝 지면(짝 없는 항목 = 미완) · 원고(SSOT)→맥락→산출물 3층 파이프라인 · 제작↔검증 적대적 짝(자기 판정 금지·왕복 토론 금지). |
 | [**project-init**](./plugins/project-init) | 인터뷰 기반 프로젝트 부트스트래퍼. 의도 우선 ≤4문항 → spec(JSON) → 결정론 생성기가 자립형 프로젝트 뼈대(상시 로드 CLAUDE.md 코어 + 도메인명 시드 에이전트 + advisor 게이트)를 찍어낸다. 같은 spec = 같은 프로젝트. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
