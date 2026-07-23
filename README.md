@@ -44,6 +44,9 @@ cd skills-marketplace
 
 _(스킬은 계속 추가됩니다.)_
 
+> 이 마켓을 어떻게 강화·운영하는지(포착→수거→승격 루프, 게이트 4개, 성숙도 2단계)는
+> [`docs/loop.md`](./docs/loop.md) 참고.
+
 ## 새 스킬 추가하는 법
 
 1. `plugins/<plugin-name>/` 폴더를 만들고 그 안에:
