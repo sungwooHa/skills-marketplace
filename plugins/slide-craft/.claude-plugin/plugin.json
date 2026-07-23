@@ -1,0 +1,12 @@
+{
+  "name": "slide-craft",
+  "version": "1.0.0",
+  "description": "읽는 지면(보고 슬라이드·원페이저) 저작 스킬 — 아키타입 6종 선택제(overview-map·timeline-roadmap·report-set·comparison-matrix·status-dashboard·process-flow)로 지면 경제와 독법을 먼저 정하고, 자립형 HTML(외부 리소스 0)로 만든 뒤 결정론 스크립트로 계측해 통과해야 완료로 본다. 게이트 — 폰트 하한·상자 점유율·문서 경계 밖 잘림·외부 요청 차단·명암비·PDF 페이지 수. 발표자·발표자 노트·PPTX가 필요한 '발표하는 덱'은 이 스킬이 아니라 deck-harness 소관. 트리거 — \"보고 슬라이드\", \"A3 한 장으로\", \"관계도 한 페이지\", \"로드맵 시각화\", \"one-pager\".",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/slide-craft",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["slide", "one-pager", "보고슬라이드", "지면", "report-page", "html-slide", "self-contained", "playwright-qa", "roadmap", "dashboard", "comparison-matrix", "pdf"]
+}
