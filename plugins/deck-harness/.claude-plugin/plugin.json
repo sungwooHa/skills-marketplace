@@ -1,6 +1,6 @@
 {
   "name": "deck-harness",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "발표자료(덱) 제작 하네스 — 9개 에이전트가 협업해 HTML 슬라이드 + 발표자 스크립트 뷰어 + PPTX 3종 세트를 만든다. 3단계 강한 게이트: PLAN(전략가+디자인디렉터 → plan.md 사용자 승인) → BUILD(에셋 큐레이션 + 덱 빌드) → VERIFY(5축 병렬 비평 — 빌드/의도/디자인/발표/한국어 자연스러움). 5축 중 1축이라도 CRITICAL이면 통과 불가. 검증 결과는 feedback 루프로 누적돼 다음 덱의 에이전트 체크리스트가 된다. 폰트·출력경로 등 프로젝트값은 .claude/deck-harness.local.md로 주입.",
   "author": {
     "name": "sungwooHa"

@@ -108,8 +108,8 @@ check "plugin.json name == deck-harness" $?
 python3 -c "
 import json,sys
 d=json.load(open(sys.argv[1]))
-sys.exit(0 if d.get('version')=='1.0.0' else 1)" "$MANIFEST" 2>/dev/null
-check "plugin.json version == 1.0.0" $?
+sys.exit(0 if d.get('version')=='1.1.0' else 1)" "$MANIFEST" 2>/dev/null
+check "plugin.json version == 1.1.0" $?
 python3 -c "
 import json,sys
 d=json.load(open(sys.argv[1]))
