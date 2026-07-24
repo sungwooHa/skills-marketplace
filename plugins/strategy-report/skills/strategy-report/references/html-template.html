@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title><!-- 핵심 메시지 한 문장 --></title>
+<style>
+  @page { size: A4; margin: 12.7mm 20mm; }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: 'Pretendard', 'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
+    font-size: 10pt;
+    line-height: 1.15;
+    color: #000;
+    max-width: 210mm;
+    margin: 0 auto;
+    padding: 12.7mm 20mm;
+  }
+
+  h1 { font-size: 12pt; font-weight: 700; margin-bottom: 4px; text-align: center; }
+  .subtitle { font-size: 10pt; color: #000; margin-bottom: 20px; text-align: center; }
+  h2 { font-size: 11pt; font-weight: 700; color: #4472C4; margin-top: 20px; margin-bottom: 8px; }
+  h3 { font-size: 10pt; font-weight: 700; margin-top: 14px; margin-bottom: 6px; color: #000; }
+  p { margin-bottom: 4px; line-height: 1.15; }
+  ul { margin-left: 18px; margin-bottom: 6px; }
+  li { margin-bottom: 3px; line-height: 1.15; }
+
+  /* Section-opening declaration line (one sentence per section) */
+  .highlight-box { padding: 6px 18px; margin: 8px 0; font-weight: 700; line-height: 1.15; }
+
+  table { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 10pt; }
+  th, td { border: 1px solid #bbb; padding: 5px 8px; text-align: left; line-height: 1.15; }
+  th { background: #f2f3f5; font-weight: 700; white-space: nowrap; }
+
+  /* Component: cycle / process steps */
+  .cycle-row { display: flex; gap: 8px; margin: 10px 0; align-items: stretch; }
+  .cycle-step { flex: 1; background: #f7f8fa; border: 1px solid #bbb; padding: 8px 10px; text-align: center; position: relative; }
+  .cycle-step .step-label { font-size: 8pt; color: #666; margin-bottom: 2px; }
+  .cycle-step .step-title { font-size: 10pt; font-weight: 700; color: #4472C4; }
+  .cycle-step .step-desc { font-size: 9pt; color: #000; margin-top: 3px; line-height: 1.15; }
+  .cycle-arrow { display: flex; align-items: center; font-size: 14pt; color: #999; padding: 0 2px; }
+
+  /* Component: KPT (Keep / Problem / Try) or any 3-color grouping */
+  .kpt-row { display: flex; gap: 8px; margin: 8px 0; }
+  .kpt-card { flex: 1; padding: 7px 10px; font-size: 9pt; line-height: 1.15; }
+  .kpt-keep { background: #ecfdf5; border: 1px solid #a7f3d0; }
+  .kpt-problem { background: #fef2f2; border: 1px solid #fecaca; }
+  .kpt-try { background: #eff6ff; border: 1px solid #bfdbfe; }
+  .kpt-card .kpt-title { font-weight: 700; font-size: 10pt; margin-bottom: 3px; }
+  .kpt-keep .kpt-title { color: #065f46; }
+  .kpt-problem .kpt-title { color: #991b1b; }
+  .kpt-try .kpt-title { color: #1e40af; }
+
+  /* Component: check / pillars (N equal cards) */
+  .check-row { display: flex; gap: 8px; margin: 8px 0; }
+  .check-card { flex: 1; padding: 7px 10px; font-size: 9pt; background: #f7f8fa; border: 1px solid #bbb; line-height: 1.15; }
+  .check-card .check-title { font-weight: 700; font-size: 10pt; margin-bottom: 3px; color: #4472C4; }
+
+  /* Component: calendar / schedule */
+  .calendar { width: 100%; border-collapse: collapse; margin: 8px 0; font-size: 9pt; }
+  .calendar th { background: #f2f3f5; padding: 4px 6px; text-align: center; font-size: 9pt; }
+  .calendar td { padding: 4px 6px; text-align: center; height: 28px; border: 1px solid #bbb; }
+  .calendar .month-label { background: #4472C4; color: #fff; font-weight: 700; text-align: left; padding: 4px 8px; }
+  .legend { font-size: 9pt; color: #000; margin-top: 4px; }
+  .legend-dot { display: inline-block; width: 10px; height: 10px; margin-right: 3px; vertical-align: middle; }
+
+  /* Component: declaration / pledge box (framed, centered) */
+  .declaration { border: 1px solid #4472C4; padding: 12px 16px; margin: 12px 0; text-align: center; font-size: 10pt; font-weight: 700; color: #000; line-height: 1.6; }
+
+  .text-muted { color: #666; font-size: 9pt; }
+
+  @media print { body { padding: 0; } h2 { page-break-after: avoid; } table, .cycle-row, .kpt-row, .check-row { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+
+<!-- ============ TITLE ============ -->
+<h1><!-- 핵심 메시지 한 문장 (제목화) --></h1>
+<div class="subtitle"><!-- 부제: 대상 × 맥락 --></div>
+
+<!-- ============ BODY: 섹션마다 선언 한 줄 → 개조식 불릿 ============ -->
+
+<h2>1. <!-- 섹션 제목 --></h2>
+<div class="highlight-box"><!-- 이 섹션의 선언 한 문장 --></div>
+<ul>
+  <li><strong><!-- 주장 --></strong> <!-- 뒷받침 문장 --></li>
+  <li><strong><!-- 주장 --></strong> <!-- 뒷받침 문장 --></li>
+</ul>
+
+<!-- ---- COMPONENT GALLERY (필요한 섹션에만 사용) ---- -->
+
+<!-- 사이클/프로세스 -->
+<div class="cycle-row">
+  <div class="cycle-step"><div class="step-label">STEP 1</div><div class="step-title">단계명</div><div class="step-desc">설명</div></div>
+  <div class="cycle-arrow">&rarr;</div>
+  <div class="cycle-step"><div class="step-label">STEP 2</div><div class="step-title">단계명</div><div class="step-desc">설명</div></div>
+</div>
+
+<!-- KPT / 3분류 -->
+<div class="kpt-row">
+  <div class="kpt-card kpt-keep"><div class="kpt-title">Keep</div>내용</div>
+  <div class="kpt-card kpt-problem"><div class="kpt-title">Problem</div>내용</div>
+  <div class="kpt-card kpt-try"><div class="kpt-title">Try</div>내용</div>
+</div>
+
+<!-- 점검/기둥 (N등분 카드) -->
+<div class="check-row">
+  <div class="check-card"><div class="check-title">항목</div>설명</div>
+  <div class="check-card"><div class="check-title">항목</div>설명</div>
+</div>
+
+<!-- 표 -->
+<table>
+  <tr><th>구분</th><th>내용</th></tr>
+  <tr><td>행</td><td>값</td></tr>
+</table>
+
+<!-- 선언문 -->
+<div class="declaration">우리는 …하겠다.</div>
+
+</body>
+</html>
