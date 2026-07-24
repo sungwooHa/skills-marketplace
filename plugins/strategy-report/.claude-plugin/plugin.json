@@ -1,0 +1,10 @@
+{
+  "name": "strategy-report",
+  "version": "1.0.0",
+  "description": "한국어 전략/기획 보고서를 자립형 A4 인쇄용 HTML + 짝이 맞는 Word(.docx)로 찍어내는 경량 보고서 빌더. 개조식·선언문 우선 구조, 재사용 시각 컴포넌트(사이클/KPT/점검/달력/선언문), 단일 마크다운 소스 → 2종 산출.",
+  "author": { "name": "sungwooHa" },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/strategy-report",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["report", "strategy", "기획서", "전략보고서", "그라운드룰", "word", "docx", "html", "a4-print", "korean", "개조식"]
+}
