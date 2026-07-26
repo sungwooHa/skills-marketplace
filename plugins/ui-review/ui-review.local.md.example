@@ -1,0 +1,29 @@
+# ui-review 프로젝트 설정 (예시)
+#
+# 이 파일을 프로젝트의 `.claude/ui-review.local.md` 로 복사해 쓰세요.
+# `key: value` 평문 라인만 읽습니다 — 빈 줄, `#` 주석, 주변 산문은 무시됩니다.
+# 모든 키는 선택입니다. 없으면 스킬 내장 보편 기본값(degraded 모드)으로 동작합니다.
+
+# 정적 디자인 스펙 파일 경로 (design-review/Noa의 소스 오브 트루스)
+design-spec: docs/design.md
+
+# 모션 스펙 위치 — 파일 경로 또는 "파일 §절번호" (motion-review/Rei의 소스 오브 트루스)
+motion-spec: docs/design.md §13
+
+# 대상 플랫폼: compose | web | both
+platform: compose
+
+# 제품 성격 한 줄 — M-J 응집성 판정 기준 (예: 크리스프 대시보드 / 플레이풀 컨슈머 앱)
+product-character: crisp dashboard — no-bouncy defaults, short tweens, shared tokens
+
+# 사용자 노출 금지 용어 (쉼표 구분) — check M 용어 누출 목록. 새 누출 발견 시 여기에 추가
+forbidden-terms: 슬롯, tail, ··
+
+# UI 소스 디렉터리 (all 스캔 범위)
+ui-dir: app/src/main/java/**/ui
+
+# 페어 화면 목록 (H 횡단 일관성 검수 대상) — "파일A ↔ 파일B" 형식, 줄 반복 가능
+pair: ClockInScreen.kt ↔ ClockOutScreen.kt
+
+# 고빈도(100+/day) 표면 명시 — M-B 빈도 판정의 근거 목록
+high-frequency-surfaces: kiosk main tap, PIN keypad, IME transitions

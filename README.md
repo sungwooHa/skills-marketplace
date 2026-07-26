@@ -1,7 +1,7 @@
 # skills-marketplace
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
-[![skills](https://img.shields.io/badge/skills-7-4C9A2A)](#수록-스킬)
+[![skills](https://img.shields.io/badge/skills-8-4C9A2A)](#수록-스킬)
 [![license](https://img.shields.io/badge/license-MIT%20(exceptions)-blue)](#라이선스)
 [![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
 [![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
@@ -40,6 +40,7 @@ cd skills-marketplace
 | [**deck-harness**](./plugins/deck-harness) | 발표자료 덱 제작 하네스. 에이전트 9종이 PLAN→BUILD→VERIFY로 HTML 슬라이드 + 발표자 스크립트 + PPTX 생성. 5축 검증 게이트. |
 | [**project-init**](./plugins/project-init) | 인터뷰 기반 프로젝트 부트스트래퍼. 의도 우선 ≤4문항 → spec(JSON) → 결정론 생성기가 자립형 프로젝트 뼈대(상시 로드 CLAUDE.md 코어 + 도메인명 시드 에이전트 + advisor 게이트)를 찍어낸다. 같은 spec = 같은 프로젝트. |
 | [**strategy-report**](./plugins/strategy-report) | 한국어 전략/기획 보고서를 자립형 A4 인쇄용 HTML + 짝이 맞는 Word(.docx)로 찍어내는 경량 빌더. 개조식·선언문 우선 구조, 재사용 시각 컴포넌트(사이클·KPT·점검·달력·선언문), 단일 마크다운 소스 → 2종 산출. |
+| [**ui-review**](./plugins/ui-review) | 제품 UI에서 AI 티를 걷어내는 검수 하네스. 정적 디자인 검수(Noa: 타이포·그리드·터치·대비 + 잉여 안내문구·내부용어 누출 검출) + 절제 우선 모션 검수(Rei: 빈도 티어·4문 게이트·합리화 대응표 27종). 검수 전용, 화면 생성 안 함. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
