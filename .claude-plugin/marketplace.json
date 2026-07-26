@@ -56,6 +56,13 @@
       "description": "한국어 전략/기획 보고서를 자립형 A4 인쇄용 HTML + 짝이 맞는 Word(.docx)로 찍어내는 경량 보고서 빌더. 개조식·선언문 우선 구조, 재사용 시각 컴포넌트(사이클/KPT/점검/달력/선언문), 단일 마크다운 소스 → 2종 산출. 프레임 확정 → 작성 → 렌더 2종 → 가벼운 검증.",
       "version": "1.0.0",
       "keywords": ["report", "strategy", "기획서", "전략보고서", "그라운드룰", "word", "docx", "html", "a4-print", "korean", "개조식"]
+    },
+    {
+      "name": "ui-review",
+      "source": "./plugins/ui-review",
+      "description": "제품 UI에서 AI 티를 걷어내는 검수 하네스 — 정적 디자인 검수(Noa: 타이포 floor·그리드·터치 티어·대비·브랜드 토큰 + 잉여 안내문구·내부용어 누출 AI-tell 카피 검출)와 절제 우선 모션 검수(Rei: 빈도 티어·4문 게이트·삭제 우선 위계·reduced-motion 의무·합리화 대응표 27종·Compose 포팅 전표 101건) 자매 스킬 2종. 검수 전용 — 화면 생성 안 함. 프로젝트 토큰은 .claude/ui-review.local.md로 주입.",
+      "version": "1.0.0",
+      "keywords": ["design-review", "motion-review", "ui", "ux", "디자인 검수", "모션 검수", "AI 티", "ai-slop", "compose", "android", "typography", "reduced-motion"]
     }
   ]
 }

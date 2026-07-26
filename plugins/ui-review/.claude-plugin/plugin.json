@@ -1,0 +1,10 @@
+{
+  "name": "ui-review",
+  "version": "1.0.0",
+  "description": "제품 UI의 '디자인 중심' 검수 하네스 — AI가 만든 화면에서 AI 티를 걷어낸다. 정적 디자인 검수(Noa: 타이포 floor·8px 그리드·터치 티어·대비·브랜드 토큰 정확도 + 잉여 안내문구·내부용어 누출 같은 AI-tell 카피 검출)와 절제 우선 모션 검수(Rei: 빈도 티어·4문 게이트·삭제>축소>이징>타이밍>재설계 위계·reduced-motion 의무·합리화 대응표 27종)의 자매 스킬 2종. 검수 전용 — 화면을 생성하지 않는다(제작↔비평 페르소나 분리). 프로젝트 토큰 값은 .claude/ui-review.local.md로 주입, 스펙 없는 프로젝트는 보편 floor만으로 degraded 동작.",
+  "author": { "name": "sungwooHa" },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/ui-review",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["design-review", "motion-review", "ui", "ux", "디자인 검수", "모션 검수", "AI 티", "ai-slop", "compose", "android", "html", "typography", "accessibility", "reduced-motion", "restraint"]
+}
