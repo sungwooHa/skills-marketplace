@@ -1,0 +1,63 @@
+<!--
+COMPONENT 02 — one-line meta row (조연 강등 장치)
+grammar: axis E (콘텐츠 강약) — fix step 4 · §0-6 개수 상한
+
+WHAT   Supporting facts (background, source, scope, period) demoted from a card
+       into a single line: a 2×17px tick, a fixed-width bold label, one gray sentence.
+USE    Directly under the headline. This is where an E-3 "over-weight supporting
+       card" goes after you take its box away.
+RULES  · At most 2 rows. A third row eats the headline's breathing room.
+       · Each row is exactly ONE line. If the sentence wraps, shorten the manuscript
+         line — do not add a row and do not shrink the font.
+       · Label column is a fixed 100px so both rows' bodies align at x=180.
+       · Label is ink #1A1A1A/700, body is gray #8A8B8F/400 — same size (22.4px).
+         The tier difference is weight and color, never size.
+       · No box, no background, no border. The tick is the only ornament.
+LIMITS body ≤ 46 Korean chars per line (1054px @ 22.4px)
+ANCHOR block top y=222 when the headline is 2 lines · row pitch 44px
+SLOTS  {{LABEL}} {{BODY}}
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>02 meta row</title>
+<style>
+  :root{--bg:#F6F7F9;--ink:#000000;--accent:#2B5FE0;--meta-body:#8A8B8F;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .meta{position:absolute;left:50px;top:222px;display:flex;flex-direction:column;gap:22px}
+  .meta-row{display:flex;align-items:baseline;font-size:22.4px;line-height:1}
+  .bar{display:inline-block;width:2px;height:17px;background:#1A1A1A;margin-right:11px;
+       position:relative;top:2px}
+  .meta-label{font-weight:700;color:#1A1A1A;width:100px;letter-spacing:-0.02em}
+  .meta-body{font-weight:400;color:var(--meta-body);letter-spacing:-0.02em;white-space:nowrap}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="meta">
+    <div class="meta-row">
+      <span class="bar"></span>
+      <span class="meta-label">{{LABEL_1}}</span>
+      <span class="meta-body">{{BODY_1}}</span>
+    </div>
+    <div class="meta-row">
+      <span class="bar"></span>
+      <span class="meta-label">{{LABEL_2}}</span>
+      <span class="meta-body">{{BODY_2}}</span>
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

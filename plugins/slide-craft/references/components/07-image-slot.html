@@ -1,0 +1,70 @@
+<!--
+COMPONENT 07 — image slot / placeholder block
+grammar: axis A (에셋 이미지 중심, 원본 그대로) · axis G (G-4 이미지 고립)
+
+WHAT   The one and only way an image enters a slide: a fixed-size slot cut out of
+       a container, filled by the source file untouched.
+USE    Inside 05 (574px flush right) or 06 (190px flush right). A standalone
+       floating image card is a G-4 violation — do not build one.
+RULES  · The image is an asset, not raw material. Never crop, retouch, recolor,
+         upscale, or regenerate the source file. Fit is done in CSS only.
+       · object-fit:cover + object-position is the entire toolkit. If the aspect
+         ratio still fights the layout, change the SLOT size — then recompute the
+         text column width and re-check the bullet char limits (§0-5).
+       · No border, no frame, no drop shadow, no caption box on the image itself.
+         The parent container's radius clips it (overflow:hidden on the parent).
+       · Never lay text over the photo. If the composition demands it, move the
+         text out of the image and widen the text column instead.
+       · No image yet? Ship the gray placeholder as-is. Do not substitute a stock
+         or generated image to "fill the hole" — an empty slot is honest, a fake
+         one silently becomes final.
+VARIANTS
+  .slot--dark   574px, seam dissolved into a dark panel by a 90px gradient
+  .slot--card   190px, plain, inside a white card
+  .slot--empty  gray #8A8A8E + centered IMAGE label (default when no asset)
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>07 image slot</title>
+<style>
+  :root{--bg:#F6F7F9;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .slot{position:relative;overflow:hidden;background:#8A8A8E;display:flex;
+        align-items:center;justify-content:center}
+  .slot img{width:100%;height:100%;object-fit:cover;object-position:center;display:block}
+  .slot--empty::after{content:'IMAGE';font-size:15px;font-weight:600;letter-spacing:.18em;
+                      color:#F0F0F2}
+  .slot--dark{width:574px}
+  .slot--dark::before{content:'';position:absolute;left:0;top:0;bottom:0;width:90px;z-index:2;
+                      background:linear-gradient(to right,#1A1A1A,rgba(26,26,26,0))}
+  .slot--card{width:190px;background:#8E8E92}
+  .slot--card.slot--empty::after{font-size:13px}
+
+  /* demo frame only — not part of the component */
+  .demo{position:absolute;left:46px;top:200px;width:1188px;height:300px;background:#1A1A1A;
+        border-radius:16px;overflow:hidden;display:flex;justify-content:flex-end}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="demo">
+    <div class="slot slot--dark slot--empty">
+      <!-- <img src="{{IMAGE_SRC}}" alt=""> -->
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

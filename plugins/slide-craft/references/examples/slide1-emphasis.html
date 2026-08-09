@@ -1,0 +1,107 @@
+<!--
+EXAMPLE 1 — axis E (콘텐츠 강약) assembled
+components: 00-canvas + 01-eyebrow-headline + 02-meta-row + 03-icon-card-row
+body block starts at y=329 (2-line headline + 2 meta rows)
+
+What the axis does here: one 44px headline owns the slide, with a single keyword on
+a blue box. Background and source data — which in a weaker layout would each get
+their own boxed card on the left half — are demoted to two one-line meta rows. The
+five topics drop to the bottom as columns inside ONE card, so the eye runs top to
+bottom once instead of choosing between a left block and a right block.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>01. 연구의 목적</title>
+<style>
+  :root{
+    --bg:#F6F7F9;
+    --ink:#000000;
+    --accent:#2B5FE0;
+    --hl:#2B64F1;
+    --meta-body:#8A8B8F;
+    --card-desc:#AEAEB2;
+    --footer:#A1A2A6;
+    --divider:#EFEFF1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+
+  .eyebrow{position:absolute;left:48px;top:45px;font-size:26.3px;font-weight:700;color:var(--accent);
+           letter-spacing:-0.01em;line-height:1}
+  .headline{position:absolute;left:46px;top:86px;font-size:44px;font-weight:800;color:var(--ink);
+            line-height:56px;letter-spacing:-0.01em;white-space:nowrap}
+  .headline .hl{background:var(--hl);color:#fff;padding:2px 5px 2px;margin:0 -2px;
+                box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+  .meta{position:absolute;left:50px;top:222px;display:flex;flex-direction:column;gap:22px}
+  .meta-row{display:flex;align-items:baseline;font-size:22.4px;line-height:1}
+  .bar{display:inline-block;width:2px;height:17px;background:#1A1A1A;margin-right:11px;
+       position:relative;top:2px}
+  .meta-label{font-weight:700;color:#1A1A1A;width:100px;letter-spacing:-0.02em}
+  .meta-body{font-weight:400;color:var(--meta-body);letter-spacing:-0.02em}
+
+  .card{position:absolute;left:46px;top:329px;width:1188px;height:316px;background:#fff;
+        border-radius:18px;display:flex;box-shadow:0 3px 14px rgba(16,24,40,.055);}
+  .col{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;
+       padding-top:56px}
+  .col + .col::before{content:'';position:absolute;left:0;top:38px;bottom:60px;width:1px;
+                      background:var(--divider)}
+  .icon{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;
+        justify-content:center;font-size:38px;line-height:1}
+  .col-title{margin-top:26px;font-size:25px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;
+             line-height:1}
+  .col-desc{margin-top:20px;font-size:19.6px;font-weight:400;color:var(--card-desc);line-height:22.5px;
+            text-align:center;letter-spacing:-0.02em}
+
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;justify-content:space-between;
+          font-size:17px;font-weight:500;color:var(--footer);letter-spacing:-0.01em}
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="eyebrow">01. 연구의 목적</div>
+
+  <div class="headline">수도권 공동주택 <span class="hl">가격에 영향을 미치는 요인</span>을<br>물리적 특성부터 지역 간 차이까지 단계적으로 확인한다.</div>
+
+  <div class="meta">
+    <div class="meta-row"><span class="bar"></span><span class="meta-label">연구 배경</span><span class="meta-body">교통망 확충과 도시개발로 서울 가격 상승이 근처로 확산되지만, 모든 사업의 동일한 상승 연결은 안됨.</span></div>
+    <div class="meta-row"><span class="bar"></span><span class="meta-label">분석 자료</span><span class="meta-body">서울·인천·경기 등 주요 도시 아파트 실거래 신고자료</span></div>
+  </div>
+
+  <div class="card">
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#F5793B,#E24C1E)">🏠</div>
+      <div class="col-title">물리적 특성</div>
+      <div class="col-desc">전용면적 · 건축 연수<br>층수 · 단지 규모가<br>거래가격에 미치는 영향</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#4CC46A,#1FA84C)">🚌</div>
+      <div class="col-title">교통 접근성</div>
+      <div class="col-desc">지하철역 · 버스정류장,<br>주요 도로와의 접근성이<br>가격에 미치는 영향</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#5B7BEA,#3A55C8)">🏢</div>
+      <div class="col-title">생활 인프라</div>
+      <div class="col-desc">학교 · 상업시설,<br>공원 등 생활 인프라가<br>가격에 미치는 영향</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#FBC646,#F0A427)">🏡</div>
+      <div class="col-title">지역 간 비교</div>
+      <div class="col-desc">서울 · 인천 · 경기<br>지역 간 가격 결정<br>요인의 차이를 비교</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#BBD8F5,#9CC3EE)"><svg width="46" height="46" viewBox="0 0 34 34" fill="none"><rect x="7" y="4" width="18" height="26" rx="2" fill="#FFFFFF" stroke="#5B7BB5" stroke-width="1.6"/><rect x="10.5" y="9" width="11" height="3" rx="1" fill="#3C6BD0"/><rect x="10.5" y="15" width="11" height="1.8" rx=".9" fill="#9AA8BF"/><rect x="10.5" y="19" width="11" height="1.8" rx=".9" fill="#9AA8BF"/><rect x="10.5" y="23" width="7" height="1.8" rx=".9" fill="#9AA8BF"/></svg></div>
+      <div class="col-title">정책 시사점</div>
+      <div class="col-desc">분석 결과를 바탕으로<br>도시계획 및 주택정책<br>시사점 제시</div>
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

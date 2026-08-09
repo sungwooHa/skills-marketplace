@@ -1,0 +1,84 @@
+<!--
+COMPONENT 04 — unified stat container (N stats merged into ONE vessel)
+grammar: axis G (콘텐츠 그룹화) — fix step 2 · §0-6 개수 상한
+
+WHAT   3 headline figures that used to be 3 floating cards, merged into a single
+       white container and separated only by hairlines.
+USE    The "summary tier" of a scope/scale slide. Pair it with 05 below to make
+       one seamless block (see examples/slide2-grouping.html).
+RULES  · This is the direct antidote to G-1 (카드 파편화). If you find yourself
+         writing gap between stat cards, you are back in the before state.
+       · flex:1 1 0 — exact n-way split (3 stats → 396px each).
+       · Divider inset is asymmetric (top 35 / bottom 33) and uses #F0F0F2,
+         one step lighter than the #EFEFF1 used on plain white cards.
+       · Internal rhythm is fixed: padding-top 44 → number → 13 → label(2 lines,
+         line-height 25) → 14 → sub. Do not tune per column.
+       · The label's 1.11 line-height is intentionally tight — it binds the two
+         label lines into one visual unit against the number above it.
+       · Only the number carries the accent color. Label and sub stay neutral (E-4).
+       · Standalone use: give .stats its own border-radius:16px + shadow.
+         Stacked with 05: the parent .block owns the radius, .stats has none.
+LIMITS number ≤ 7 chars · label 2 lines × ≤ 11 chars · sub ≤ 14 chars (396px column)
+ANCHOR .stats height 206px
+SLOTS  {{NUM}} {{LABEL_a}}/{{LABEL_b}} {{SUB}}
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>04 stat container</title>
+<style>
+  :root{--bg:#F6F7F9;--accent:#2B5FE0;--stat-label:#3A3A3C;--stat-sub:#B3B3B6;
+        --divider:#F0F0F2;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .block{position:absolute;left:46px;top:226px;width:1188px;border-radius:16px;
+         overflow:hidden;box-shadow:0 3px 14px rgba(16,24,40,.055)}
+  .stats{height:206px;background:#fff;display:flex}
+  .stat{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;
+        padding-top:44px}
+  .stat + .stat::before{content:'';position:absolute;left:0;top:35px;bottom:33px;width:1px;
+                        background:var(--divider)}
+  .stat-num{font-size:29px;font-weight:800;color:var(--accent);letter-spacing:-0.01em;
+            line-height:1}
+  .stat-label{margin-top:13px;font-size:22.5px;font-weight:500;color:var(--stat-label);
+              line-height:25px;text-align:center;letter-spacing:-0.02em}
+  .stat-sub{margin-top:14px;font-size:21.3px;font-weight:400;color:var(--stat-sub);
+            letter-spacing:-0.02em;line-height:1}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="block">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">{{NUM_1}}</div>
+        <div class="stat-label">{{LABEL_1a}}<br>{{LABEL_1b}}</div>
+        <div class="stat-sub">{{SUB_1}}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{NUM_2}}</div>
+        <div class="stat-label">{{LABEL_2a}}<br>{{LABEL_2b}}</div>
+        <div class="stat-sub">{{SUB_2}}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">{{NUM_3}}</div>
+        <div class="stat-label">{{LABEL_3a}}<br>{{LABEL_3b}}</div>
+        <div class="stat-sub">{{SUB_3}}</div>
+      </div>
+    </div>
+    <!-- ▼ 05-dark-callout-image goes here to form one seamless block ▼ -->
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

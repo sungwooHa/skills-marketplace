@@ -1,0 +1,62 @@
+<!--
+COMPONENT 01 — eyebrow + headline with keyword highlight
+grammar: axis E (콘텐츠 강약) · §0-2 타이포 스케일 · §0-5 행 길이 상한
+
+WHAT   The single protagonist of the slide. 44px/800 headline, at most 2 lines,
+       with exactly one keyword span lifted onto a blue box.
+USE    Always the first block on the canvas. Every slide has exactly one.
+RULES  · Headline ≤ 2 lines, ≤ 26 Korean chars per line (1188px @ 44px).
+       · Exactly ONE .hl span per slide. Two highlights = two protagonists (E-4).
+       · Highlight the keyword, not the whole sentence — 어절 단위로 끊는다.
+       · Break lines with <br> at a semantic boundary; do not let it auto-wrap.
+       · white-space:nowrap is intentional: an unplanned wrap must break the render
+         loudly instead of silently reflowing.
+       · Text is transcribed from the manuscript verbatim. No paraphrasing.
+       · Never introduce a 30~40px "sub-headline" — that band is reserved empty (E-5).
+ANCHORS eyebrow ink-top y=46 · headline line 1 ink-top y=89~93
+        next block starts at y=177 (1-line headline) / 226 (2-line) / 329 (2-line + meta)
+SLOTS  {{EYEBROW}}  "01. 연구의 목적" or "PRICE DETERMINANTS"
+       {{HEAD_1}} {{KEYWORD}} {{HEAD_2}}
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>01 eyebrow + headline</title>
+<style>
+  :root{--bg:#F6F7F9;--ink:#000000;--accent:#2B5FE0;--hl:#2B64F1;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .eyebrow{position:absolute;left:48px;top:45px;font-size:26.3px;font-weight:700;
+           color:var(--accent);letter-spacing:-0.01em;line-height:1}
+  /* Latin all-caps eyebrows read tight at -0.01em → use letter-spacing:0 instead */
+  .eyebrow.latin{letter-spacing:0}
+
+  .headline{position:absolute;left:46px;top:86px;font-size:44px;font-weight:800;
+            color:var(--ink);line-height:56px;letter-spacing:-0.01em;white-space:nowrap}
+  .headline .hl{background:var(--hl);color:#fff;padding:2px 5px;margin:0 -2px;
+                box-decoration-break:clone;-webkit-box-decoration-break:clone}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="eyebrow">{{EYEBROW}}</div>
+  <div class="headline">{{HEAD_1}}<span class="hl">{{KEYWORD}}</span>{{HEAD_2}}<br>{{HEAD_LINE_2}}</div>
+
+  <!-- one-line variant (no highlight): body block then starts at y=177
+  <div class="eyebrow latin">03. PRICE DETERMINANTS</div>
+  <div class="headline">네 갈래로 분석해본 부동산 가격 결정요인</div>
+  -->
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

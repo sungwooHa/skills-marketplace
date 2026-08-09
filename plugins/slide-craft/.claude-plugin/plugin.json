@@ -1,0 +1,26 @@
+{
+  "name": "slide-craft",
+  "version": "1.0.0",
+  "description": "보고·제안 슬라이드 제작/진단 자매 스킬 2종 + 컴포넌트 라이브러리. 3축 디자인 문법(콘텐츠 강약·콘텐츠 그룹화·글 가독성)을 레퍼런스 슬라이드 픽셀 재현에서 계측한 수치 스펙(1280×720 · 타이포 스케일 44/26.3/25/17~22.4 · 파랑 1종 팔레트 · 한글 행 길이 상한)으로 못 박고, 자립형 HTML 컴포넌트 8종으로 조립한다. 원고 문안은 그대로 전사하고 사용자 이미지는 원본 그대로 배치 — 레이아웃이 문장과 이미지를 따라간다. 제작(slide-craft)과 판정(slide-clinic·design-diagnostician) 페르소나 분리.",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/slide-craft",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": [
+    "slide",
+    "슬라이드",
+    "장표",
+    "보고자료",
+    "presentation",
+    "design-grammar",
+    "typography",
+    "readability",
+    "가독성",
+    "component-library",
+    "html-slides",
+    "korean",
+    "diagnosis"
+  ]
+}

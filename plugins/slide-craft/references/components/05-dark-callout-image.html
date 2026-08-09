@@ -1,0 +1,82 @@
+<!--
+COMPONENT 05 — dark callout merged with a flush image block
+grammar: axis G (그룹화) fix steps 3~4 · axis A (에셋 원본 그대로) · §0-5
+
+WHAT   A dark #1A1A1A panel carrying an exclusions / caveats list, with the
+       supporting photo built INTO the same container, flush to the right edge.
+USE    The "condition tier" that sits under 04. Together they read as one block.
+       Also usable standalone for a full-width caveat panel.
+RULES  · The photo has no frame, no caption box, no rounded corner of its own —
+         that is exactly the G-4 symptom this component removes. The parent's
+         border-radius + overflow:hidden clips it.
+       · The dark→photo seam is dissolved by a 90px left gradient on .photo::after.
+         Do not composite this into the image file; it is a CSS layer (axis A).
+       · Image goes in as-is: <img style="width:100%;height:100%;object-fit:cover">.
+         Crop only via object-position. Never edit or regenerate the source file.
+       · Bullets are ONE line each, max 28 Korean chars in the 544px text column.
+         Wrapping here is R-1 — shorten the manuscript, do not shrink the type.
+       · Bullet marker is a 5×5 square #BFBFC2, indent 16px. Never a round dot.
+       · Text sits at z-index 2 over the gradient; the photo never runs under it.
+LIMITS title ≤ 20 chars · 3 bullets × ≤ 28 Korean chars, 1 line each
+ANCHOR photo slot 574 × full height, flush right · dark panel padding 55 top / 54 left
+SLOTS  {{DARK_TITLE}} {{BULLET_1..3}} {{IMAGE_SRC}}
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>05 dark callout + image</title>
+<style>
+  :root{--bg:#F6F7F9;--dark:#1A1A1A;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .block{position:absolute;left:46px;top:226px;width:1188px;height:433px;border-radius:16px;
+         overflow:hidden;display:flex;flex-direction:column;
+         box-shadow:0 3px 14px rgba(16,24,40,.055)}
+
+  .dark{position:relative;flex:1;background:var(--dark);overflow:hidden}
+  .photo{position:absolute;right:0;top:0;bottom:0;width:574px;background:#8A8A8E;
+         display:flex;align-items:center;justify-content:center;
+         font-size:15px;font-weight:600;letter-spacing:.18em;color:#F0F0F2}
+  .photo img{width:100%;height:100%;object-fit:cover;display:block}
+  .photo::after{content:'';position:absolute;left:0;top:0;bottom:0;width:90px;
+                background:linear-gradient(to right,#1A1A1A,rgba(26,26,26,0))}
+  .dark-inner{position:relative;z-index:2;padding:55px 0 0 54px}
+  .dark-title{font-size:25px;font-weight:700;color:#fff;letter-spacing:-0.02em;line-height:1}
+  .dark-list{margin-top:23px;list-style:none;display:flex;flex-direction:column;gap:9.5px}
+  .dark-list li{position:relative;padding-left:16px;font-size:19.6px;font-weight:400;
+                color:#E6E6E8;letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+  .dark-list li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;
+                        background:#BFBFC2}
+  .dark-list sup{font-size:.62em;vertical-align:.5em}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="block">
+    <!-- ▲ 04-stat-container's .stats goes above this when stacking ▲ -->
+    <div class="dark">
+      <div class="photo"><!-- <img src="{{IMAGE_SRC}}" alt=""> -->IMAGE</div>
+      <div class="dark-inner">
+        <div class="dark-title">{{DARK_TITLE}}</div>
+        <ul class="dark-list">
+          <li>{{BULLET_1}}</li>
+          <li>{{BULLET_2}}</li>
+          <li>{{BULLET_3}}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>
