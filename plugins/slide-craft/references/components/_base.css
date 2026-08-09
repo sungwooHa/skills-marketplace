@@ -1,0 +1,46 @@
+/* slide-craft — base token sheet (design-grammar.md §0)
+   Every component inlines this block. Kept here as the single readable copy;
+   when a value changes, change design-grammar.md §0 first, then this file,
+   then the inline copies in components/ and examples/. */
+
+:root{
+  /* canvas */
+  --bg:#F6F7F9;
+  --surface:#FFFFFF;
+  --margin:46px;
+
+  /* ink */
+  --ink:#000000;
+  --ink-2:#1A1A1A;
+  --ink-3:#111113;
+
+  /* the only chromatic hue on the deck */
+  --accent:#2B5FE0;   /* eyebrow · stat number · conclusion row */
+  --hl:#2B64F1;       /* keyword highlight box */
+
+  /* neutral ladder */
+  --gray-body:#8A8B8F;
+  --gray-stat:#3A3A3C;
+  --gray-tag:#A0A0A4;
+  --gray-desc:#AEAEB2;
+  --gray-bullet:#B4B4B8;
+  --gray-sub:#B3B3B6;
+  --gray-marker:#C9C9CD;
+  --divider:#EFEFF1;
+  --divider-2:#F0F0F2;
+  --footer:#A1A2A6;
+  --dark:#1A1A1A;
+
+  /* surface */
+  --radius:16px;
+  --shadow:0 3px 14px rgba(16,24,40,.055);
+}
+
+/* System Korean sans stack — no webfont, no CDN.
+   Pretendard is used when locally installed; the fallbacks ship with macOS /
+   Windows so the deck renders identically without a network. */
+body{
+  font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+  -webkit-font-smoothing:antialiased;
+  text-rendering:geometricPrecision;
+}

@@ -1,0 +1,107 @@
+<!--
+SMOKE TEST — a slide that exists only to prove the component library composes.
+components: 00-canvas + 01-eyebrow-headline + 02-meta-row + 03-icon-card-row (4 cols)
+Copy is unrelated to the three reference examples, and the column count (4) appears
+in none of them — the point is to exercise geometry the originals never covered.
+
+Checks it is meant to catch:
+  · 4-way flex:1 1 0 split lands on exact 297px columns with no divider on col 1
+  · description line limit at a 297px column (≈15 Korean chars) instead of 238px
+  · body block still lands at y=329 with a 2-line headline + 2 meta rows
+  · a single .hl in a 2-line headline does not push the second line off-scale
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>02. 도입 효과</title>
+<style>
+  :root{
+    --bg:#F6F7F9;
+    --ink:#000000;
+    --accent:#2B5FE0;
+    --hl:#2B64F1;
+    --meta-body:#8A8B8F;
+    --card-desc:#AEAEB2;
+    --footer:#A1A2A6;
+    --divider:#EFEFF1;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+
+  /* 01 — eyebrow + headline */
+  .eyebrow{position:absolute;left:48px;top:45px;font-size:26.3px;font-weight:700;color:var(--accent);
+           letter-spacing:-0.01em;line-height:1}
+  .headline{position:absolute;left:46px;top:86px;font-size:44px;font-weight:800;color:var(--ink);
+            line-height:56px;letter-spacing:-0.01em;white-space:nowrap}
+  .headline .hl{background:var(--hl);color:#fff;padding:2px 5px;margin:0 -2px;
+                box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+  /* 02 — meta rows */
+  .meta{position:absolute;left:50px;top:222px;display:flex;flex-direction:column;gap:22px}
+  .meta-row{display:flex;align-items:baseline;font-size:22.4px;line-height:1}
+  .bar{display:inline-block;width:2px;height:17px;background:#1A1A1A;margin-right:11px;
+       position:relative;top:2px}
+  .meta-label{font-weight:700;color:#1A1A1A;width:100px;letter-spacing:-0.02em}
+  .meta-body{font-weight:400;color:var(--meta-body);letter-spacing:-0.02em;white-space:nowrap}
+
+  /* 03 — icon card row */
+  .card{position:absolute;left:46px;top:329px;width:1188px;height:316px;background:#fff;
+        border-radius:18px;display:flex;box-shadow:0 3px 14px rgba(16,24,40,.055)}
+  .col{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;
+       padding-top:56px}
+  .col + .col::before{content:'';position:absolute;left:0;top:38px;bottom:60px;width:1px;
+                      background:var(--divider)}
+  .icon{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;
+        justify-content:center;font-size:38px;line-height:1}
+  .col-title{margin-top:26px;font-size:25px;font-weight:700;color:#1A1A1A;letter-spacing:-0.01em;
+             line-height:1}
+  .col-desc{margin-top:20px;font-size:19.6px;font-weight:400;color:var(--card-desc);
+            line-height:22.5px;text-align:center;letter-spacing:-0.02em}
+
+  /* 00 — footer */
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;justify-content:space-between;
+          font-size:17px;font-weight:500;color:var(--footer);letter-spacing:-0.01em}
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="eyebrow">02. 도입 효과</div>
+
+  <div class="headline">반복 업무 자동화로 <span class="hl">팀의 처리 시간을 절반으로</span><br>줄이고 남은 시간을 판단이 필요한 일에 쓴다.</div>
+
+  <div class="meta">
+    <div class="meta-row"><span class="bar"></span><span class="meta-label">도입 범위</span><span class="meta-body">영업·지원·개발 3개 본부 27개 팀, 2026년 1분기 순차 적용</span></div>
+    <div class="meta-row"><span class="bar"></span><span class="meta-label">측정 기준</span><span class="meta-body">도입 전후 12주간 처리 건수와 평균 소요 시간을 동일 기준으로 비교</span></div>
+  </div>
+
+  <div class="card">
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#F5793B,#E24C1E)">🗂️</div>
+      <div class="col-title">문서 정리</div>
+      <div class="col-desc">제안서 · 계약서 초안을<br>표준 양식으로 자동<br>정리해 검토만 남긴다</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#4CC46A,#1FA84C)">📊</div>
+      <div class="col-title">데이터 집계</div>
+      <div class="col-desc">흩어진 실적 자료를<br>하나의 표로 모아<br>주간 보고에 붙인다</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#5B7BEA,#3A55C8)">✉️</div>
+      <div class="col-title">응대 초안</div>
+      <div class="col-desc">반복 문의에 대한 답변<br>초안을 먼저 만들고<br>담당자가 확인한다</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#FBC646,#F0A427)">🔍</div>
+      <div class="col-title">이력 검색</div>
+      <div class="col-desc">지난 논의와 결정을<br>한 번에 찾아 같은<br>논의를 반복하지 않는다</div>
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 07</span></div>
+</div>
+</body>
+</html>

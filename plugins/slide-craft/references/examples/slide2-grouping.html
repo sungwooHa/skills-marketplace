@@ -1,0 +1,116 @@
+<!--
+EXAMPLE 2 — axis G (콘텐츠 그룹화) assembled
+components: 00-canvas + 01-eyebrow-headline + 04-stat-container + 05-dark-callout-image
+body block starts at y=226 (2-line headline, no meta rows)
+
+What the axis does here: three figures that would float as three separate cards are
+merged into one white vessel split by hairlines, and the exclusion list is welded
+directly beneath it inside the same rounded container (radius + overflow:hidden on
+.block, no radius on the children). The photo lives inside that container flush to
+the right edge with no frame of its own. Result: one visual object, not six.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>02. 연구의 범위</title>
+<style>
+  :root{
+    --bg:#F6F7F9;
+    --ink:#000000;
+    --accent:#2B5FE0;
+    --hl:#2B64F1;
+    --stat-label:#3A3A3C;
+    --stat-sub:#B3B3B6;
+    --footer:#A1A2A6;
+    --divider:#F0F0F2;
+    --dark:#1A1A1A;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+
+  .eyebrow{position:absolute;left:48px;top:45px;font-size:26.3px;font-weight:700;color:var(--accent);
+           letter-spacing:-0.01em;line-height:1}
+  .headline{position:absolute;left:46px;top:86px;font-size:44px;font-weight:800;color:var(--ink);
+            line-height:56px;letter-spacing:-0.01em;white-space:nowrap}
+  .headline .hl{background:var(--hl);color:#fff;padding:2px 5px;margin:0 -2px;
+                box-decoration-break:clone;-webkit-box-decoration-break:clone}
+
+  .block{position:absolute;left:46px;top:226px;width:1188px;height:433px;border-radius:16px;
+         overflow:hidden;display:flex;flex-direction:column;box-shadow:0 3px 14px rgba(16,24,40,.055);}
+
+  .stats{height:206px;background:#fff;display:flex}
+  .stat{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;
+        padding-top:44px}
+  .stat + .stat::before{content:'';position:absolute;left:0;top:35px;bottom:33px;width:1px;
+                        background:var(--divider)}
+  .stat-num{font-size:29px;font-weight:800;color:var(--accent);letter-spacing:-0.01em;line-height:1}
+  .stat-label{margin-top:13px;font-size:22.5px;font-weight:500;color:var(--stat-label);
+              line-height:25px;text-align:center;letter-spacing:-0.02em}
+  .stat-sub{margin-top:14px;font-size:21.3px;font-weight:400;color:var(--stat-sub);
+            letter-spacing:-0.02em;line-height:1}
+
+  .dark{position:relative;flex:1;background:var(--dark);overflow:hidden}
+  .photo{position:absolute;right:0;top:0;bottom:0;width:574px;background:#8A8A8E;
+         display:flex;align-items:center;justify-content:center;
+         font-size:15px;font-weight:600;letter-spacing:.18em;color:#F0F0F2}
+  .photo::after{content:'';position:absolute;left:0;top:0;bottom:0;width:90px;
+                background:linear-gradient(to right,#1A1A1A,rgba(26,26,26,0))}
+  .dark-inner{position:relative;z-index:2;padding:55px 0 0 54px}
+  .dark-title{font-size:25px;font-weight:700;color:#fff;letter-spacing:-0.02em;line-height:1}
+  .dark-list{margin-top:23px;list-style:none;display:flex;flex-direction:column;gap:9.5px}
+  .dark-list li{position:relative;padding-left:16px;font-size:19.6px;font-weight:400;color:#E6E6E8;
+                letter-spacing:-0.02em;line-height:1}
+  .dark-list li::before{content:'';position:absolute;left:0;top:8px;width:5px;height:5px;
+                        background:#BFBFC2}
+  .dark-list sup{font-size:.62em;vertical-align:.5em}
+
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;justify-content:space-between;
+          font-size:17px;font-weight:500;color:var(--footer);letter-spacing:-0.01em}
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="eyebrow">02. 연구의 범위</div>
+
+  <div class="headline">실거래 신고자료를 기반으로 시세 흐름과<br>지역별 <span class="hl">가격 격차의 구조적 요인을 파악</span>하는 목적</div>
+
+  <div class="block">
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-num">6.5년</div>
+        <div class="stat-label">공동주택 실거래<br>신고자료 분석 기간</div>
+        <div class="stat-sub">2019.01 ~ 2025.06</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">평균 28평</div>
+        <div class="stat-label">연구 범위에 있는<br>주택 전용 면적</div>
+        <div class="stat-sub">초소형·대형 주택 제외</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">3개</div>
+        <div class="stat-label">연구 범위에 있는<br>도시 권역 총 개수</div>
+        <div class="stat-sub">서울, 경기, 인천</div>
+      </div>
+    </div>
+
+    <div class="dark">
+      <div class="photo">IMAGE</div>
+      <div class="dark-inner">
+        <div class="dark-title">부동산 시세 관련 연구 제외 항목</div>
+        <ul class="dark-list">
+          <li>전용면적 40m<sup>2</sup> 미만의 소형 분류, 135m<sup>2</sup> 초과 대형 분류 주택</li>
+          <li>특수관계인 간 비정상적 거래 혹은 코인을 통한 금전 거래</li>
+          <li>주택 컨디션에 비해 가격이 비정상적으로 낮거나 높은 사례</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

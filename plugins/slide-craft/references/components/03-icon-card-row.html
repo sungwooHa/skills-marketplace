@@ -1,0 +1,81 @@
+<!--
+COMPONENT 03 — icon card row (N columns inside ONE card, split by dividers)
+grammar: axis E fix step 5 · axis G (하나의 그릇) · §0-5 · §0-6
+
+WHAT   3~5 sibling items laid left→right inside a single white card. They are
+       columns, not cards: no gaps, no per-item background — only 1px dividers.
+USE    The bottom body block of an emphasis-first slide, when each item is
+       short (icon + 1-line title + 3-line description).
+RULES  · 3~5 columns. At 6 the column drops below 200px and the description
+         breaks the 12~13 char line limit (R-1).
+       · flex:1 1 0 — exact n-way split. Never hand-tune column widths.
+       · The divider is drawn by .col + .col::before, so the first column has none
+         and the outer edges stay clean. Inset is asymmetric on purpose
+         (top 38 / bottom 60) — it stops short of the description block.
+       · Description is exactly 3 lines with explicit <br>. Fixed height keeps
+         all columns' baselines aligned (prevents R-4 pooling).
+       · Icon circles may be multi-colored: they are decoration, not a hierarchy.
+         Titles and descriptions stay monochrome (E-4).
+       · Use emoji or inline SVG for icons. No icon-font CDN, no remote images.
+LIMITS title ≤ 8 Korean chars · description 12~13 chars × 3 lines (238px @ 19.6px)
+ANCHOR card x46 y329 · 1188×316 · radius 18 (single card → 18, containers → 16)
+SLOTS  {{ICON}} {{TITLE}} {{DESC_1}}/{{DESC_2}}/{{DESC_3}}
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>03 icon card row</title>
+<style>
+  :root{--bg:#F6F7F9;--card-desc:#AEAEB2;--divider:#EFEFF1;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .card{position:absolute;left:46px;top:329px;width:1188px;height:316px;background:#fff;
+        border-radius:18px;display:flex;box-shadow:0 3px 14px rgba(16,24,40,.055)}
+  .col{flex:1 1 0;position:relative;display:flex;flex-direction:column;align-items:center;
+       padding-top:56px}
+  .col + .col::before{content:'';position:absolute;left:0;top:38px;bottom:60px;width:1px;
+                      background:var(--divider)}
+  .icon{width:74px;height:74px;border-radius:50%;display:flex;align-items:center;
+        justify-content:center;font-size:38px;line-height:1}
+  .col-title{margin-top:26px;font-size:25px;font-weight:700;color:#1A1A1A;
+             letter-spacing:-0.01em;line-height:1}
+  .col-desc{margin-top:20px;font-size:19.6px;font-weight:400;color:var(--card-desc);
+            line-height:22.5px;text-align:center;letter-spacing:-0.02em}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="card">
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#F5793B,#E24C1E)">{{ICON_1}}</div>
+      <div class="col-title">{{TITLE_1}}</div>
+      <div class="col-desc">{{DESC_1a}}<br>{{DESC_1b}}<br>{{DESC_1c}}</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#4CC46A,#1FA84C)">{{ICON_2}}</div>
+      <div class="col-title">{{TITLE_2}}</div>
+      <div class="col-desc">{{DESC_2a}}<br>{{DESC_2b}}<br>{{DESC_2c}}</div>
+    </div>
+    <div class="col">
+      <div class="icon" style="background:linear-gradient(135deg,#5B7BEA,#3A55C8)">{{ICON_3}}</div>
+      <div class="col-title">{{TITLE_3}}</div>
+      <div class="col-desc">{{DESC_3a}}<br>{{DESC_3b}}<br>{{DESC_3c}}</div>
+    </div>
+    <!-- repeat .col up to 5 · icon gradient palette:
+         orange #F5793B→#E24C1E · green #4CC46A→#1FA84C · blue #5B7BEA→#3A55C8
+         yellow #FBC646→#F0A427 · pale  #BBD8F5→#9CC3EE -->
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

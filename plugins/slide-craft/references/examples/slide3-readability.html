@@ -1,0 +1,128 @@
+<!--
+EXAMPLE 3 — axis R (글 가독성) assembled
+components: 00-canvas + 01-eyebrow-headline (1 line, no highlight) + 06-wide-card x4
+body block starts at y=177 (1-line headline)
+
+What the axis does here: the same four topics in four narrow vertical columns give
+each bullet ~230px, so every bullet folds to two or three lines and orphan syllables
+land alone at the end. Turning the layout 90 degrees — 2x2 wide cards — buys a 367px
+text column, and every bullet lands on exactly one line at the same 17px. The layout
+changed; not one character of the manuscript was cut and no font was shrunk.
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>03. PRICE DETERMINANTS</title>
+<style>
+  :root{
+    --bg:#F6F7F9;
+    --ink:#000000;
+    --accent:#2B5FE0;
+    --tag:#A0A0A4;
+    --bullet:#B4B4B8;
+    --footer:#A1A2A6;
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+
+  .eyebrow{position:absolute;left:48px;top:45px;font-size:26.3px;font-weight:700;color:var(--accent);
+           letter-spacing:0;line-height:1}
+  .headline{position:absolute;left:46px;top:86px;font-size:44px;font-weight:800;color:var(--ink);
+            line-height:56px;letter-spacing:-0.01em;white-space:nowrap}
+
+  .grid{position:absolute;left:46px;top:177px;width:1188px;height:471px;
+        display:grid;grid-template-columns:586px 586px;grid-template-rows:227px 227px;
+        column-gap:16px;row-gap:15px}
+
+  .kard{position:relative;background:#fff;border-radius:16px;overflow:hidden;display:flex;box-shadow:0 3px 14px rgba(16,24,40,.055);}
+  .kard-body{flex:1;padding:28px 0 0 29px}
+  .kard-photo{width:190px;background:#8E8E92;display:flex;align-items:center;justify-content:center;
+              font-size:13px;font-weight:600;letter-spacing:.18em;color:#F2F2F4}
+
+  .tag{font-size:19px;font-weight:400;color:var(--tag);letter-spacing:-0.02em;line-height:1}
+  .kard-title{margin-top:10px;font-size:25px;font-weight:800;color:#111113;letter-spacing:-0.02em;
+              line-height:1}
+  .blist{margin-top:14px;list-style:none;display:flex;flex-direction:column;gap:5px}
+  .blist li{position:relative;padding-left:16px;font-size:17px;font-weight:400;color:var(--bullet);
+            letter-spacing:-0.02em;line-height:1}
+  .blist li::before{content:'';position:absolute;left:2px;top:7px;width:4px;height:4px;
+                    background:#C9C9CD}
+  .concl{margin-top:16px;font-size:19.6px;font-weight:700;color:var(--accent);letter-spacing:-0.02em;
+         line-height:1;white-space:nowrap}
+  .concl .ar{font-size:21px;margin-right:6px}
+
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;justify-content:space-between;
+          font-size:17px;font-weight:500;color:var(--footer);letter-spacing:-0.01em}
+</style>
+</head>
+<body>
+<div class="slide">
+  <div class="eyebrow">03. PRICE DETERMINANTS</div>
+  <div class="headline">네 갈래로 분석해본 부동산 가격 결정요인</div>
+
+  <div class="grid">
+    <div class="kard">
+      <div class="kard-body">
+        <div class="tag">구조적 특성</div>
+        <div class="kard-title">부동산 자체의 물리적 특성</div>
+        <ul class="blist">
+          <li>전용면적이 클수록 총거래가격 상승</li>
+          <li>건축 연수 증가 → 유지관리 비용 부정적</li>
+          <li>재건축 기대 지역(노후 단지) 가격은 상승</li>
+        </ul>
+        <div class="concl"><span class="ar">→</span>면적·규모는 정(+), 노후도는 부(−)</div>
+      </div>
+      <div class="kard-photo">IMAGE</div>
+    </div>
+
+    <div class="kard">
+      <div class="kard-body">
+        <div class="tag">입지적 특성</div>
+        <div class="kard-title">거주지 근처의 교통 접근성</div>
+        <ul class="blist">
+          <li>출퇴근 시간이 주거 만족도에 직접 영향</li>
+          <li>역과 가까울수록 도심·업무지역 접근성 우수</li>
+          <li>초근접 지역은 소음·혼잡으로 효과 감소 가능</li>
+        </ul>
+        <div class="concl"><span class="ar">→</span>역세권 효과는 거리 구간에 따라 달라짐</div>
+      </div>
+      <div class="kard-photo">IMAGE</div>
+    </div>
+
+    <div class="kard">
+      <div class="kard-body">
+        <div class="tag">입지적 특성</div>
+        <div class="kard-title">어린 자녀들을 위한교육 환경</div>
+        <ul class="blist">
+          <li>학교·학원가 지역은 수요가 지속적으로 유지</li>
+          <li>초등학교 도보 통학 가능 여부가 중요</li>
+          <li>중·고교는 학업 성취도와 지역 이미지가 작용</li>
+        </ul>
+        <div class="concl"><span class="ar">→</span>학군 효과는 지역별 편차가 큼</div>
+      </div>
+      <div class="kard-photo">IMAGE</div>
+    </div>
+
+    <div class="kard">
+      <div class="kard-body">
+        <div class="tag">환경적 특성</div>
+        <div class="kard-title">마트, 가전, 생활을 위한 인프라</div>
+        <ul class="blist">
+          <li>대형마트·병원·공공기관·문화시설·공원·체육시설</li>
+          <li>상업시설 근접은 쇼핑·여가 편의로 긍정적</li>
+          <li>지나친 근접은 교통혼잡·소음 유발</li>
+        </ul>
+        <div class="concl"><span class="ar">→</span>편의와 혼잡이 함께 작용</div>
+      </div>
+      <div class="kard-photo">IMAGE</div>
+    </div>
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

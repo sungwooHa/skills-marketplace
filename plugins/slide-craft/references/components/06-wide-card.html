@@ -1,0 +1,94 @@
+<!--
+COMPONENT 06 — wide horizontal card (tag / title / 3 bullets / conclusion + image slot)
+grammar: axis R (글 가독성) — fix step 3 · axis A · §0-5 행 길이 상한
+
+WHAT   The readability fix in physical form. Four items that would be four narrow
+       vertical columns (≈230px of text) become a 2×2 grid of wide cards whose
+       text column is 367px — enough for every bullet to land on ONE line.
+USE    Whenever bullets wrap in a column layout. Choosing this component IS the
+       prescription for R-1/R-2/R-3.
+RULES  · Grid is 2 × 586px with column-gap 16, 2 × 227px rows with row-gap 15.
+         Do not go to 3 columns: the text area drops to ~230px and R-1 returns.
+       · Text column = 586 − 190(image) − 29(left padding) = 367px.
+         If you widen the image slot, recompute the bullet char limit (§0-5).
+       · Exactly 3 bullets + exactly 1 conclusion row per card, on every card.
+         Uneven counts are R-5 and they break the shared baseline.
+       · white-space:nowrap on bullets and the conclusion row is deliberate:
+         an overlong line must visibly overflow in the screenshot instead of
+         quietly wrapping. Fix by shortening the manuscript, never by font size.
+       · Tag is neutral gray text (19px/400) — not a colored pill. A colored tag
+         becomes a second emphasis axis (E-4).
+       · The only accent on the card is the conclusion row (→ + 19.6px/700 blue).
+         The arrow is left-aligned with the tag and title at x=76.
+       · Image slot: fixed 190px, flush right, inherits the card radius via
+         overflow:hidden. Source image used as-is (axis A).
+LIMITS tag ≤ 6 chars · title 11~15 chars (1 line) · bullets 20~23 chars (1 line)
+       conclusion 12~20 chars (1 line)
+ANCHOR grid x46 y177 · 1188×471 · internal rhythm 28 top / 29 left → tag → 10 →
+       title → 14 → bullets(gap 5, pitch 23.5) → 16 → conclusion
+SLOTS  {{TAG}} {{TITLE}} {{B1}}/{{B2}}/{{B3}} {{CONCLUSION}} {{IMAGE_SRC}}
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>06 wide card</title>
+<style>
+  :root{--bg:#F6F7F9;--accent:#2B5FE0;--tag:#A0A0A4;--bullet:#B4B4B8;--footer:#A1A2A6}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;color:var(--footer)}
+
+  /* ── component ────────────────────────────────────────── */
+  .grid{position:absolute;left:46px;top:177px;width:1188px;height:471px;display:grid;
+        grid-template-columns:586px 586px;grid-template-rows:227px 227px;
+        column-gap:16px;row-gap:15px}
+
+  .kard{position:relative;background:#fff;border-radius:16px;overflow:hidden;display:flex;
+        box-shadow:0 3px 14px rgba(16,24,40,.055)}
+  .kard-body{flex:1;padding:28px 0 0 29px}
+  .kard-photo{width:190px;background:#8E8E92;display:flex;align-items:center;
+              justify-content:center;font-size:13px;font-weight:600;letter-spacing:.18em;
+              color:#F2F2F4}
+  .kard-photo img{width:100%;height:100%;object-fit:cover;display:block}
+
+  .tag{font-size:19px;font-weight:400;color:var(--tag);letter-spacing:-0.02em;line-height:1}
+  .kard-title{margin-top:10px;font-size:25px;font-weight:800;color:#111113;
+              letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+  .blist{margin-top:14px;list-style:none;display:flex;flex-direction:column;gap:5px}
+  .blist li{position:relative;padding-left:16px;font-size:17px;font-weight:400;
+            color:var(--bullet);letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+  .blist li::before{content:'';position:absolute;left:2px;top:7px;width:4px;height:4px;
+                    background:#C9C9CD}
+  .concl{margin-top:16px;font-size:19.6px;font-weight:700;color:var(--accent);
+         letter-spacing:-0.02em;line-height:1;white-space:nowrap}
+  .concl .ar{font-size:21px;margin-right:6px}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <div class="grid">
+    <div class="kard">
+      <div class="kard-body">
+        <div class="tag">{{TAG_1}}</div>
+        <div class="kard-title">{{TITLE_1}}</div>
+        <ul class="blist">
+          <li>{{B1a}}</li><li>{{B1b}}</li><li>{{B1c}}</li>
+        </ul>
+        <div class="concl"><span class="ar">→</span>{{CONCLUSION_1}}</div>
+      </div>
+      <div class="kard-photo"><!-- <img src="{{IMAGE_1}}" alt=""> -->IMAGE</div>
+    </div>
+
+    <!-- repeat .kard ×4 (2×2). Never 3 columns — see RULES. -->
+  </div>
+
+  <div class="footer"><span>Company Name, All rights reserved.</span><span>Page 02</span></div>
+</div>
+</body>
+</html>

@@ -58,6 +58,13 @@
       "keywords": ["report", "strategy", "기획서", "전략보고서", "그라운드룰", "word", "docx", "html", "a4-print", "korean", "개조식"]
     },
     {
+      "name": "slide-craft",
+      "source": "./plugins/slide-craft",
+      "description": "보고·제안 슬라이드 제작/진단 자매 스킬 2종 + 자립형 HTML 컴포넌트 8종. 3축 디자인 문법(콘텐츠 강약·콘텐츠 그룹화·글 가독성) + 에셋 상수(이미지 원본 그대로)를 레퍼런스 픽셀 재현에서 계측한 수치 스펙으로 못 박았다 — 1280×720, 타이포 스케일 44/26.3/25/17~22.4, 파랑 1종 팔레트, 한글 행 길이 상한. 원고는 그대로 전사하고, 문장이 안 들어가면 폰트가 아니라 레이아웃을 바꾼다. 제작(slide-craft)과 판정(slide-clinic·design-diagnostician) 페르소나 분리, 조립 예시 4장이 회귀 기준선.",
+      "version": "1.0.0",
+      "keywords": ["slide", "슬라이드", "장표", "보고자료", "presentation", "design-grammar", "typography", "readability", "가독성", "component-library", "html-slides", "korean", "diagnosis"]
+    },
+    {
       "name": "ui-review",
       "source": "./plugins/ui-review",
       "description": "제품 UI에서 AI 티를 걷어내는 검수 하네스 — 정적 디자인 검수(Noa: 타이포 floor·그리드·터치 티어·대비·브랜드 토큰 + 잉여 안내문구·내부용어 누출 AI-tell 카피 검출)와 절제 우선 모션 검수(Rei: 빈도 티어·4문 게이트·삭제 우선 위계·reduced-motion 의무·합리화 대응표 27종·Compose 포팅 전표 101건) 자매 스킬 2종. 검수 전용 — 화면 생성 안 함. 프로젝트 토큰은 .claude/ui-review.local.md로 주입.",

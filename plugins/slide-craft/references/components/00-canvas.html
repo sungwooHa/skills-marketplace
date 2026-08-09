@@ -1,0 +1,61 @@
+<!--
+COMPONENT 00 — slide canvas frame + footer
+grammar: §0-1 캔버스·그리드, §0-4 수직 리듬 앵커
+
+WHAT   The fixed 1280×720 stage every slide is built on, plus the footer row.
+       Everything else in this library is placed inside .slide.
+USE    Copy this whole file as the starting point of a new slide, then paste
+       components into the marked slot in document order.
+RULES  · Canvas is 1280×720. Never change it — the whole numeric layer assumes it.
+       · Content box is x 46…1234 (width 1188). Nothing crosses that except the footer.
+       · The footer deliberately sits 19px outside the content box (left 27 / right 29).
+       · overflow:hidden on .slide — content must fit, never scroll.
+       · The screenshot target is `.slide`, not the page body.
+SLOTS  {{FOOTER_LEFT}}  e.g. "Company Name, All rights reserved."
+       {{FOOTER_RIGHT}} e.g. "Page 02"
+-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<title>00 canvas</title>
+<style>
+  :root{
+    --bg:#F6F7F9; --surface:#FFFFFF; --ink:#000000; --ink-2:#1A1A1A;
+    --accent:#2B5FE0; --hl:#2B64F1; --footer:#A1A2A6;
+    --radius:16px; --shadow:0 3px 14px rgba(16,24,40,.055);
+  }
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{background:#fff}
+  body{font-family:Pretendard,'Apple SD Gothic Neo','Noto Sans KR','Malgun Gothic',sans-serif;
+       -webkit-font-smoothing:antialiased;text-rendering:geometricPrecision}
+
+  /* ── canvas ───────────────────────────────────────────── */
+  .slide{position:relative;width:1280px;height:720px;background:var(--bg);overflow:hidden}
+
+  /* ── footer ───────────────────────────────────────────── */
+  .footer{position:absolute;left:27px;right:29px;top:682px;display:flex;
+          justify-content:space-between;font-size:17px;font-weight:500;
+          color:var(--footer);letter-spacing:-0.01em}
+
+  /* ── dev-only guides: delete before shipping ──────────── */
+  .guides{position:absolute;inset:0;pointer-events:none;opacity:0}
+  .guides::before{content:'';position:absolute;left:46px;right:46px;top:0;bottom:0;
+                  outline:1px dashed #2B5FE0}
+</style>
+</head>
+<body>
+<div class="slide">
+
+  <!-- ▼▼ paste components here, in document order ▼▼
+       01-eyebrow-headline  (always first)
+       02-meta-row          (optional, ≤2 rows)
+       one body block:  03-icon-card-row | 04-stat-container
+                        | 05-dark-callout-image | 06-wide-card grid
+       ▲▲ ------------------------------------------- ▲▲ -->
+
+  <div class="footer"><span>{{FOOTER_LEFT}}</span><span>{{FOOTER_RIGHT}}</span></div>
+  <div class="guides"></div>
+</div>
+</body>
+</html>
