@@ -84,6 +84,19 @@ _capture/YYMMDD_<프로젝트>_<스킬>.md
 > 기록으로 남기는 자리이기도 하다.
 > 작업은 브랜치 + 격리 워크트리에서, 로컬 커밋까지. push·PR은 사람이 판단한다.
 
+### 승격 세션용 개발 도구 (repo 로컬)
+
+`.claude/agents/` 에 이 repo에서 작업하는 사람만 쓰는 개발용 에이전트를 둔다.
+**배포물이 아니다** — 플러그인의 `agents/` 에 넣으면 소비자에게 딸려가므로 넣지 않는다.
+
+humanize-korean 승격 회차용 6종:
+`translationese-research-distiller`(학술 보고서 → 구조화 JSON 증류) ·
+`taxonomy-gap-analyzer`(본진 분류 체계 대비 갭 매트릭스) ·
+`korean-translation-scholar`(학술 인용 계보를 SSOT·scholarship.md 양면 안착) ·
+`post-editese-metric-engineer`(metrics.py 지표 추가·회귀 검증) ·
+`quick-rules-integrator`(quick-rules.md 슬림성 가드 + PR·CHANGELOG 초안) ·
+`humanize-web-architect`(Next.js 웹 확장 설계 — 선택).
+
 ---
 
 ## 4. 성숙도 2단계
