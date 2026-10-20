@@ -70,6 +70,13 @@
       "description": "제품 UI에서 AI 티를 걷어내는 검수 하네스 — 정적 디자인 검수(Noa: 타이포 floor·그리드·터치 티어·대비·브랜드 토큰 + 잉여 안내문구·내부용어 누출 AI-tell 카피 검출)와 절제 우선 모션 검수(Rei: 빈도 티어·4문 게이트·삭제 우선 위계·reduced-motion 의무·합리화 대응표 27종·Compose 포팅 전표 101건) 자매 스킬 2종. 검수 전용 — 화면 생성 안 함. 프로젝트 토큰은 .claude/ui-review.local.md로 주입.",
       "version": "1.0.0",
       "keywords": ["design-review", "motion-review", "ui", "ux", "디자인 검수", "모션 검수", "AI 티", "ai-slop", "compose", "android", "typography", "reduced-motion"]
+    },
+    {
+      "name": "research-harness",
+      "source": "./plugins/research-harness",
+      "description": "빠른 병렬 웹 리서치 — 하위 질문 3~6개를 researcher(sonnet)로 동시에 조사하고 research-analyst(opus) 1명이 병합 · 충돌 판정 · 내부 주장 판정(supported / contradicted / unverifiable) · 핵심 출처 재확인. 트리거 — \"조사해줘\", \"리서치\", \"시장 조사\", \"보강해\".",
+      "version": "1.0.0",
+      "keywords": ["research", "리서치", "시장조사", "조사", "fact-check", "parallel", "agent-team", "citations", "web-search"]
     }
   ]
 }

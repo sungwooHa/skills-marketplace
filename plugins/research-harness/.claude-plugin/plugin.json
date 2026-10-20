@@ -1,0 +1,12 @@
+{
+  "name": "research-harness",
+  "version": "1.0.0",
+  "description": "빠른 병렬 웹 리서치 하네스 — 질문을 3~6개 하위 질문으로 쪼개 researcher(sonnet)를 한 번에 병렬로 띄우고, research-analyst(opus) 1명이 합쳐 출처 달린 보고서를 낸다. 내부 주장(회의 수치 등)은 supported / contradicted / unverifiable로 판정, 핵심 출처는 재확인. 2단계라 가장 느린 하위 질문 + 합성 시간에 끝난다.",
+  "author": {
+    "name": "sungwooHa"
+  },
+  "homepage": "https://github.com/sungwooHa/skills-marketplace/tree/main/plugins/research-harness",
+  "repository": "https://github.com/sungwooHa/skills-marketplace",
+  "license": "MIT",
+  "keywords": ["research", "리서치", "시장조사", "조사", "fact-check", "parallel", "agent-team", "citations", "web-search"]
+}

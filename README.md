@@ -1,7 +1,7 @@
 # skills-marketplace
 
 [![Claude Code](https://img.shields.io/badge/Claude%20Code-plugin%20marketplace-D97757?logo=anthropic&logoColor=white)](https://github.com/sungwooHa/skills-marketplace)
-[![skills](https://img.shields.io/badge/skills-9-4C9A2A)](#수록-스킬)
+[![skills](https://img.shields.io/badge/skills-10-4C9A2A)](#수록-스킬)
 [![license](https://img.shields.io/badge/license-MIT%20(exceptions)-blue)](#라이선스)
 [![platform](https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20WSL-lightgrey)](#요구-사항)
 [![stars](https://img.shields.io/github/stars/sungwooHa/skills-marketplace?style=social)](https://github.com/sungwooHa/skills-marketplace/stargazers)
@@ -42,6 +42,7 @@ cd skills-marketplace
 | [**strategy-report**](./plugins/strategy-report) | 한국어 전략/기획 보고서를 자립형 A4 인쇄용 HTML + 짝이 맞는 Word(.docx)로 찍어내는 경량 빌더. 개조식·선언문 우선 구조, 재사용 시각 컴포넌트(사이클·KPT·점검·달력·선언문), 단일 마크다운 소스 → 2종 산출. |
 | [**slide-craft**](./plugins/slide-craft) | 읽히는 슬라이드의 문법. 3축(콘텐츠 강약·그룹화·글 가독성) + 에셋 상수(이미지 원본 그대로)를 레퍼런스 픽셀 재현 실측값으로 못 박고, 자립형 HTML 컴포넌트 8종으로 조립. 제작(slide-craft) ↔ 진단(slide-clinic) 페르소나 분리. 문장이 안 들어가면 폰트가 아니라 레이아웃을 바꾼다. |
 | [**ui-review**](./plugins/ui-review) | 제품 UI에서 AI 티를 걷어내는 검수 하네스. 정적 디자인 검수(Noa: 타이포·그리드·터치·대비 + 잉여 안내문구·내부용어 누출 검출) + 절제 우선 모션 검수(Rei: 빈도 티어·4문 게이트·합리화 대응표 27종). 검수 전용, 화면 생성 안 함. |
+| [**research-harness**](./plugins/research-harness) | 빠른 병렬 웹 리서치. 하위 질문마다 researcher(sonnet)를 동시에 띄우고 research-analyst(opus)가 병합 · 충돌 판정 · 내부 주장 판정 · 핵심 출처 재확인. 출처 달린 report.md. |
 
 각 스킬의 상세 설명·스크린샷은 해당 스킬 폴더의 README를 참고하세요.
 
